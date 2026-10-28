@@ -1,0 +1,228 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,booktabs,multirow,array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{balance}
+\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
+\newcommand{\todo}[1]{\textcolor{blue!65!black}{\textbf{[TO COMPLETE: #1]}}}
+\newcommand{\placeholder}{\textbf{[PENDING EXPERIMENT]}}
+\title{Machine Learning in Climate Analysis and Prediction:\\Long-Term Trends, City Forecasts, Climate Zones, and Daily Weather Events}
+\author{\IEEEauthorblockN{Student 1 and Student 2}
+\IEEEauthorblockA{Department of \todo{Department}, \todo{University}\\
+\todo{City, Country}\\ \todo{student1@email.edu}, \todo{student2@email.edu}}}
+\begin{document}
+\maketitle
+\begin{abstract}
+This study develops a reproducible machine-learning workflow for four complementary climate tasks: estimating long-term global temperature trends, forecasting city-level monthly temperature, identifying groups of cities with similar climate characteristics, and predicting next-day rain and extreme-heat events. Monthly land-temperature records from Berkeley Earth, atmospheric carbon dioxide measurements from NOAA Mauna Loa, Australian daily weather observations, and station data retrieved through Meteostat form the empirical basis of the analysis. Global anomalies are computed relative to 1951--1980; linear and polynomial trends are contrasted, including estimates before and after 1975. For ten geographically diverse cities, supervised regression algorithms are evaluated against a seasonal-naive baseline using time-ordered splits. Standardized monthly climatologies are analyzed with principal component analysis and k-means and compared qualitatively with K\"oppen climate zones. For rain and heat-day classification, several model families are benchmarked using held-out temporal test periods and class-sensitive metrics. \todo{After running the experiments, replace this sentence with 2--3 quantified findings, uncertainties, and one practical conclusion.} The study emphasizes leakage prevention, transparent evaluation, reproducibility, and the limits of observational climate data.
+\end{abstract}
+\begin{IEEEkeywords}
+climate change, machine learning, temperature forecasting, carbon dioxide, principal component analysis, k-means, weather classification
+\end{IEEEkeywords}
+
+\section{Introduction}
+Climate datasets record processes operating at multiple temporal and spatial scales. Long-term temperature changes are influenced by persistent forcing, whereas seasonal cycles and daily weather introduce considerable variability. Predictive methods can summarize these patterns, but performance must be assessed against straightforward baselines and with careful control of chronological leakage.
+
+This project addresses four research questions: (RQ1) How much has global mean land temperature changed per decade, and did the trend differ after 1975? (RQ2) How accurately can monthly temperatures in ten cities be forecast 12 months ahead? (RQ3) Do unsupervised clusters of city climatologies resemble known climate zones? (RQ4) Can next-day rain and local hot days be predicted from current observations, and have locally defined hot days become more frequent?
+
+The contributions are an integrated analysis spanning historical trends, regression forecasting, unsupervised learning, and supervised event classification; an explicit benchmark across the required course models; and a public, reproducible workflow. The claims in this template are methodological intentions, \emph{not completed experimental findings}.
+
+\section{Related Work}
+Global-scale assessments establish the context for observed climatic warming and its impacts \cite{ipcc2023}. Berkeley Earth distributes historical surface-temperature estimates and documents their coverage and uncertainty \cite{berkeley}. NOAA's Global Monitoring Laboratory reports atmospheric CO$_2$ measurements from Mauna Loa \cite{noaa}. K\"oppen--Geiger climate classifications provide a widely used reference for comparing climate zones \cite{beck2018}. Time-series evaluation requires respecting temporal ordering, and data preparation must be contained within cross-validation folds to avoid leakage \cite{sklearncv,sklearnpipeline}. Meteorological station archives can be accessed through Meteostat \cite{meteostat}.
+
+\todo{Add at least four relevant scholarly papers or technical reports, summarize what each contributes, and explain how this project differs. Do not count dataset portals alone as a substitute for substantive related work.}
+
+\section{Data and Study Design}
+\subsection{Data Sources}
+Table~\ref{tab:data} lists the four required sources. Observations are not interchangeable: they have different spatial scales, measurement units, calendars, and missing-data patterns. All data extraction dates, source URLs, filtering rules, and final sample sizes must be recorded.
+\begin{table}[t]
+\caption{Required datasets and roles (fill in actual coverage).}
+\label{tab:data}
+\centering\footnotesize
+\begin{tabular}{p{0.19\columnwidth}p{0.37\columnwidth}p{0.32\columnwidth}}
+\toprule
+Dataset & Role & Measured coverage / sample size \\
+\midrule
+Berkeley Earth & Global annual trends; monthly city averages & \todo{Years, cities, rows} \\
+NOAA Mauna Loa & Annual mean CO$_2$ predictor from 1958 onward & \todo{Years, missing months} \\
+Rain in Australia & Next-day rain target and daily predictors & \todo{Dates, rows, locations} \\
+Meteostat station & Next-day extreme heat and yearly counts & \todo{Station ID, period, rows} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Spatial and Temporal Selection}
+Select ten cities distributed across continents and climate types, using cities with adequate continuous coverage for the prescribed 2001--2013 test interval. State actual data availability rather than assuming it. Suggested candidates to verify are New York, London, Paris, Cairo, Mumbai, Tokyo, Sydney, Cape Town, S\~ao Paulo, and Buenos Aires. Document any replacements, geographic coordinates, and training coverage. Select one local station with at least twenty years of sufficiently complete daily maximum-temperature observations; record station identifier, elevation, latitude/longitude, and quality criteria. A Puerto Rico station may be used if its coverage satisfies the requirement.
+
+\subsection{Quality Control and Missing Data}
+Convert dates to standardized timestamps, check duplicate station-date or city-month pairs, normalize temperature units to $^\circ$C, quantify missingness by field and period, and detect physically implausible values using source-specific rules. For yearly trends, use data from 1850 onward and discuss the greater uncertainty of earlier historical estimates. Do not silently interpolate long gaps. For the Australian observations, handle categorical wind-direction and location variables with encoders fitted only on training folds; fit numerical imputation and scaling within the pipeline.
+
+\subsection{Experimental Partitions}
+Monthly temperature models train using observations up to December 2000 and reserve January 2001 through December 2013 for testing, subject to dataset coverage. Use \texttt{TimeSeriesSplit} only within the training interval. If forecasting uses lagged observed temperatures, distinguish \emph{rolling one-step predictions} from true \emph{12-month-ahead forecasting}: a 12-month horizon cannot use actual future temperatures as features. Construct direct-horizon targets $y_{t+12}$ or recursive forecasts and explain the choice.
+
+For Rain in Australia, order each location's observations by date and define the training set through 2015 and test set from 2016 onward. If calendar dates differ across locations or the file ends earlier, report the actual partitions. Apply chronological or group-aware folds where appropriate, rather than ordinary random cross-validation. For the local heat task, reserve a final chronological period for testing and use only observations known at prediction time.
+
+\section{Methods}
+\subsection{Global Temperature Anomalies}
+For year $y$, aggregate the available global monthly land temperature series to an annual mean, with a documented minimum number of months. Define the anomaly relative to the prescribed baseline:
+\begin{equation}
+A_y=T_y-\frac{1}{30}\sum_{k=1951}^{1980}T_k.
+\end{equation}
+Display annual anomalies and a 10-year rolling mean. Fit linear trends $A_y=\beta_0+\beta_1(y-y_0)+\epsilon_y$ and second- and third-degree polynomial models. Report the linear warming rate as $10\hat\beta_1$ $^\circ$C/decade with a 95\% confidence interval. Because successive annual anomalies can be autocorrelated, prefer heteroskedasticity-and-autocorrelation-consistent standard errors or a documented block bootstrap over an unadjusted independent-error confidence interval.
+
+Fit separate linear trends for 1850--1974 and 1975--latest available year. Compare their rates and uncertainty; do not claim a significant slope difference without an appropriate test. Starting in 1958, align annual CO$_2$ measurements to annual temperature anomalies and compare Ridge and Lasso regressions with and without CO$_2$. Since year and CO$_2$ are highly correlated over time, interpret coefficients as associations rather than causal effects; exclude later CO$_2$ values not available at the forecast issue date.
+
+\subsection{Monthly City Temperature Forecasting}
+For city $c$ at month $t$, derive lagged features $T_{c,t-1}$, $T_{c,t-2}$, $T_{c,t-3}$ and $T_{c,t-12}$, a trailing 12-month average computed from past observations, a numeric time trend, and cyclical month encodings:
+\begin{equation}
+s_t=\sin\left(\frac{2\pi m_t}{12}\right),\quad
+q_t=\cos\left(\frac{2\pi m_t}{12}\right).
+\end{equation}
+For a 12-month-ahead direct prediction, use predictors known at time $t$ and target $T_{c,t+12}$; for shorter horizons, report each horizon explicitly. Compare Linear Regression, Ridge, Lasso, Polynomial Regression, k-nearest neighbors, Decision Tree, Random Forest, Gradient Boosting, support-vector regression (SVR), and multilayer perceptron (MLP) regression. Use a pipeline for imputation, encoding (if needed), scaling (where relevant), and the estimator. Tune hyperparameters using time-series cross-validation on training data only.
+
+The required baseline is seasonal naive: $\hat{T}_t=T_{t-12}$ for a contemporaneous one-year seasonal reference. For a true 12-month-ahead forecast issued at time $t$, define the baseline consistently as $\hat T_{t+12}=T_t$. Benchmark all methods at equivalent issue times and horizons. Compare by city and overall using root mean squared error (RMSE), mean absolute error (MAE), and $R^2$.
+
+\subsection{Unsupervised Climate Zone Discovery}
+For each city, calculate twelve mean monthly temperatures over 1961--1990, the annual range of climatological monthly means, and latitude. For a broader clustering sample, use more than the ten forecasting cities if source coverage permits. Impute any missing climatology cautiously, standardize features, and fit principal component analysis (PCA) on the standardized matrix. Inspect explained variance and component loadings and interpret PC1/PC2 in physical terms without assuming their meaning in advance.
+
+Apply k-means for a documented range of $k$ (for example $2$--$10$), with a fixed seed and multiple initializations. Evaluate within-cluster inertia (elbow curve) and silhouette score; compare mapped clusters with reference K\"oppen--Geiger classes for at least twenty recognizable cities. Since k-means labels are arbitrary and climate-zone classes need not coincide one-to-one with clusters, use a contingency table and, where appropriate, adjusted Rand index or normalized mutual information in addition to qualitative geographic comparison.
+
+\subsection{RainTomorrow Classification}
+Use observed meteorological variables available on date $t$ to predict \texttt{RainTomorrow}. Do not include the target or any features recorded after the prediction cutoff. Compare Logistic Regression, k-NN, Naive Bayes, SVM, Decision Tree, Random Forest, Gradient Boosting, and MLP. Use preprocessing pipelines and tune hyperparameters with chronological cross-validation. Address the approximately imbalanced rain target through class weights, resampling only inside training folds where justified, or threshold selection using validation data. Report prevalence in the actual sample. A high accuracy can be misleading when the positive class is uncommon; prioritize F1, recall, precision, and ROC-AUC and show a confusion matrix.
+
+\subsection{Local Hot-Day Classification and Trend}
+Choose a local station with at least twenty years of daily weather records. Define a hot day as daily maximum temperature above the \emph{90th percentile of the full available maximum-temperature record}, as requested by the assignment, and state the reference period and consequences of this threshold definition. For a strict predictive evaluation, estimate the threshold from the training/reference period and freeze it before testing to avoid test-derived labels. Document any difference between the professor's full-record definition and this leakage-safe sensitivity analysis.
+
+Using observations available by day $t$, predict whether day $t+1$ exceeds the threshold with all classification models. Separately compute hot-day counts and rates by calendar year (accounting for different numbers of valid observations) and fit a linear trend in frequency. Report slope per decade, uncertainty, data coverage, and whether the trend is statistically distinguishable from zero. Station moves, urbanization, and missingness can bias local trends.
+
+\subsection{Metrics and Model Selection}
+For observed $y_i$ and predictions $\hat y_i$, define
+\begin{equation}
+\mathrm{MAE}=\frac1n\sum_i |y_i-\hat y_i|,\quad
+\mathrm{RMSE}=\sqrt{\frac1n\sum_i(y_i-\hat y_i)^2}.
+\end{equation}
+Also report $R^2=1-\sum_i(y_i-\hat y_i)^2/\sum_i(y_i-\bar y)^2$. For binary events, report precision, recall, F1, ROC-AUC, and confusion matrices on unseen test data. Use validation scores to choose hyperparameters; evaluate the final tuned model once on the reserved test set. Record mean and standard deviation of cross-validation scores, model training times, and per-observation or batch prediction times under a stated hardware environment.
+
+\section{Experimental Workflow: Implementation Steps}
+This section specifies the sequence of work and should be revised into past tense after the experiments are completed.
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item \textbf{Initialize project:} create a GitHub repository, \texttt{requirements.txt} with pinned versions, \texttt{README.md}, and a single \texttt{ProjectX\_TeamXX.ipynb}; set seeds and record Python version.
+\item \textbf{Acquire data:} download Berkeley Earth and Rain in Australia CSVs, NOAA CO$_2$ series, and the selected Meteostat station; record licenses and exact download instructions in \texttt{data/README.md}. Do not commit large raw data.
+\item \textbf{Verify schemas:} print each dataset's shape, date coverage, missing values, units, and class distribution; select ten cities and a local station with validated coverage.
+\item \textbf{Explore:} create at least six interpreted figures: annual temperature anomaly with rolling mean; CO$_2$ curve; seasonal monthly patterns for three contrasting cities; Australian rainfall prevalence by location; missingness/coverage; and hot-day frequency or spatial climate distribution.
+\item \textbf{Build targets and features:} compute baseline anomalies, chronological lags, annual CO$_2$ join, twelve-month-ahead targets, city climatology vectors, RainTomorrow labels, and next-day heat labels without temporal leakage.
+\item \textbf{Freeze test sets:} document exact date boundaries and retain held-out sets untouched until final evaluation.
+\item \textbf{Fit trend models:} compare global linear/polynomial fits, pre/post-1975 slopes, confidence intervals, and Ridge/Lasso with and without CO$_2$.
+\item \textbf{Fit forecast models:} tune all ten required regressors under \texttt{TimeSeriesSplit}, benchmark seasonal naive, and score city-level and aggregated test predictions.
+\item \textbf{Cluster climates:} fit PCA, inspect loadings, tune k-means with elbow/silhouette criteria, map groups, and compare at least twenty cities with K\"oppen reference types.
+\item \textbf{Classify events:} tune all eight classifiers for Australian rain and station hot days; handle class imbalance; create ROC curves and confusion matrices; estimate the hot-day frequency trend.
+\item \textbf{Interpret and reproduce:} compile one comparison table per task (or a master table), perform error analysis, cite all sources, run the notebook cleanly from start to finish, and export all figures for this report.
+\end{enumerate}
+
+\section{Results}
+\textbf{Important:} the example tables below are deliberately blank. Replace them only with measurements computed from the actual held-out test sets. Cite every generated figure in nearby prose and describe what is visible, rather than repeating its caption.
+
+\subsection{Long-Term Warming and CO$_2$}
+\begin{table}[t]
+\caption{Trend estimates and uncertainty. No results have been computed yet.}
+\label{tab:trends}\centering\footnotesize
+\begin{tabular}{lcc}
+\toprule
+Period & Rate ($^\circ$C/decade) & 95\% CI \\
+\midrule
+1850--latest & \placeholder & \placeholder \\
+1850--1974 & \placeholder & \placeholder \\
+1975--latest & \placeholder & \placeholder \\
+\bottomrule
+\end{tabular}
+\end{table}
+\todo{Insert global anomaly and CO2 graphs exported from the notebook. Discuss whether the post-1975 trend differs, and compare Ridge/Lasso with and without CO2 using a fair time split.}
+
+\subsection{Temperature Forecasting}
+\begin{table}[t]
+\caption{Regression comparison on held-out months (expand to every required model).}
+\label{tab:forecast}\centering\footnotesize
+\begin{tabular}{lccc}
+\toprule
+Model & RMSE ($^\circ$C) & MAE ($^\circ$C) & $R^2$ \\
+\midrule
+Seasonal naive & -- & -- & -- \\
+Linear / Ridge / Lasso & -- & -- & -- \\
+Polynomial / k-NN & -- & -- & -- \\
+Tree / RF / boosting & -- & -- & -- \\
+SVR / MLP & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+\todo{Replace grouped rows with one row per algorithm. Add the optimal hyperparameters, mean+SD CV score, training time, prediction time and a per-city evaluation table or supplementary table. Insert actual vs predicted plots for three cities and a horizon-dependent error plot.}
+
+\subsection{Climate Clusters}
+\todo{Report number of cities, first two PCA explained-variance ratios, component loadings, tested k values, selected k, silhouette score, elbow interpretation, a PC1--PC2 scatterplot and a world map. Add comparison with at least 20 K\"oppen-labelled cities and discuss mismatches.}
+
+\subsection{Next-Day Rain and Heat}
+\begin{table}[t]
+\caption{Classification results template (evaluate rain and heat separately).}
+\label{tab:classification}\centering\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+Model & Precision & Recall & F1 & ROC-AUC \\
+\midrule
+Logistic / k-NN & -- & -- & -- & -- \\
+Naive Bayes / SVM & -- & -- & -- & -- \\
+Tree / RF / boosting & -- & -- & -- & -- \\
+MLP & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+\todo{Expand to one model per row; add test confusion matrices, ROC curves, Australian per-location accuracy, class prevalence, and local annual hot-day counts with a trend line and uncertainty. Include CV means and SDs and elapsed times.}
+
+\section{Discussion}
+\subsection{Answers to the Research Questions}
+\textbf{RQ1: Warming rate and change after 1975.} \todo{Quote estimated global rates, uncertainty intervals, and slope-comparison interpretation.}
+
+\textbf{RQ2: Twelve-month temperature forecasts.} \todo{Identify best model and its out-of-sample RMSE/MAE/R2 versus seasonal naive; explain differences across cities and horizons.}
+
+\textbf{RQ3: Climate zones.} \todo{Explain dominant PCA dimensions, geographic cluster patterns, silhouette score, and agreement/disagreement with K\"oppen classification.}
+
+\textbf{RQ4: Rain and heat events.} \todo{Compare the top classifiers on positive-class recall/F1 and ROC-AUC, evaluate false alarms and misses, and interpret the observed local hot-day trend.}
+
+\subsection{Critical Interpretation and Limitations}
+A CO$_2$--temperature association does not, by itself, prove causation: both variables trend over time, and an attribution argument also requires physical evidence, alternative forcings, confounding controls, and appropriate causal or physical modeling. Longer-horizon forecasts generally accumulate uncertainty because future states and inputs are not fully known, and performance differences between linear, tree-based, kernel, and neural models must be grounded in actual experiments. Historical estimates before 1850 have sparser coverage and greater uncertainty; changes in instruments, observing practices, and station location may distort naive trends. Classification outcomes can also be sensitive to class imbalance, temporal shifts, geographical transfer, and decision thresholds. Extreme-heat predictions could inform health advisories and electricity demand planning, but deployment would require calibration, external validation, and a plan for costly false negatives.
+
+\section{Conclusion and Future Work}
+This paper proposes a unified approach to long-term climate trend estimation, 12-month city temperature forecasting, climate-zone discovery, and daily weather-event prediction. Its principal methodological requirements are time-aware evaluation, appropriate seasonal baselines, documented station and city coverage, and reproducible cross-validated model comparisons. \todo{Replace with concise quantitative conclusions and name the highest-performing models only after completing the analysis.} Future work can consider spatial generalization, uncertainty-aware probabilistic forecasts, additional explanatory variables, and explicit assessment of changing climate distributions.
+
+\section*{Author Contributions}
+\begin{table}[H]\centering\footnotesize
+\begin{tabular}{p{0.27\columnwidth}p{0.60\columnwidth}}
+\toprule
+Student & Specific work and evidence \\
+\midrule
+Student 1 & \todo{Tasks, commits, sections, figures} \\
+Student 2 & \todo{Tasks, commits, sections, figures} \\
+Both & \todo{Review, testing, oral presentation} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Reproducibility and Data Availability}
+The intended repository structure is \texttt{README.md}, \texttt{requirements.txt}, \texttt{notebooks/}, \texttt{src/}, \texttt{data/README.md}, \texttt{figures/}, \texttt{report/}, and \texttt{slides/}. The notebook must run top to bottom in a clean Colab or Kaggle session, with fixed random seeds and data-download instructions. \todo{Add repository URL, commit hash, package versions, runtime, and data retrieval date.}
+
+\balance
+\begin{thebibliography}{00}
+\bibitem{ipcc2023} IPCC, \emph{Climate Change 2023: Synthesis Report}. Geneva, Switzerland, 2023. [Online]. Available: \url{https://www.ipcc.ch/report/ar6/syr/}
+\bibitem{berkeley} Berkeley Earth, ``Temperature Data.'' [Online]. Available: \url{https://berkeleyearth.org/data/}
+\bibitem{noaa} NOAA Global Monitoring Laboratory, ``Trends in Atmospheric Carbon Dioxide.'' [Online]. Available: \url{https://gml.noaa.gov/ccgg/trends/}
+\bibitem{beck2018} H. E. Beck \emph{et al.}, ``Present and future K\"oppen--Geiger climate classification maps at 1-km resolution,'' \emph{Scientific Data}, vol. 5, 180214, 2018, doi: 10.1038/sdata.2018.214.
+\bibitem{sklearncv} scikit-learn developers, ``TimeSeriesSplit.'' [Online]. Available: \url{https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html}
+\bibitem{sklearnpipeline} scikit-learn developers, ``Pipeline.'' [Online]. Available: \url{https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html}
+\bibitem{meteostat} Meteostat, ``Historical Weather and Climate Data.'' [Online]. Available: \url{https://meteostat.net/}
+\bibitem{australia} Kaggle, ``Rain in Australia / Weather Dataset.'' \todo{Insert exact dataset author, version, URL and date accessed.}
+\end{thebibliography}
+\end{document}

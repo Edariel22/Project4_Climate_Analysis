@@ -1,0 +1,39 @@
+{
+  "files": [
+    {
+      "dataset": "global",
+      "source": "https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/versions/2",
+      "version": 2,
+      "file": "GlobalTemperatures.csv",
+      "sha256": "eb05b7c1d6dd0bb4c49849e08e23f9015a4f7435d53b640ca2a7817d122a97b5",
+      "bytes": 205875,
+      "retrieved_utc": "2026-10-28T01:09:10.806460+00:00"
+    },
+    {
+      "dataset": "cities",
+      "source": "https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data/versions/2",
+      "version": 2,
+      "file": "GlobalLandTemperaturesByCity.csv",
+      "sha256": "9be86b51487f10e811a0ab43a75946739dfe7bea2342ddcd1f6bc48d51b8c493",
+      "bytes": 532830464,
+      "retrieved_utc": "2026-10-28T01:09:10.806460+00:00"
+    },
+    {
+      "dataset": "rain",
+      "source": "https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package/versions/2",
+      "version": 2,
+      "file": "weatherAUS.csv",
+      "sha256": "573fd715cd69fcacc4df32024d823b450ae3edaae7e8ff2eeb623adbed424014",
+      "bytes": 14094055,
+      "retrieved_utc": "2026-10-28T01:09:10.806460+00:00"
+    },
+    {
+      "dataset": "co2",
+      "source": "https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.csv",
+      "file": "co2_mm_mlo.csv",
+      "sha256": "d895fb5b4a59fb5e4cd98e69b7667fe5bef595c6581f630852b12cb41c07f675",
+      "bytes": 38776,
+      "retrieved_utc": "2026-10-28T01:09:10.806460+00:00"
+    }
+  ]
+}

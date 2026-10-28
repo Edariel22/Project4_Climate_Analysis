@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+.env
+.env.*
+kaggle.json
+data/raw/
+data/processed/
+tmp/
+.pytest_cache/
+*.log
+report/*.aux
+report/*.log
+report/*.out
+report/*.synctex.gz
