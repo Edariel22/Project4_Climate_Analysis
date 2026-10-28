@@ -34,6 +34,18 @@
       "sha256": "d895fb5b4a59fb5e4cd98e69b7667fe5bef595c6581f630852b12cb41c07f675",
       "bytes": 38776,
       "retrieved_utc": "2026-10-28T01:09:10.806460+00:00"
+    },
+    {
+      "dataset": "station",
+      "source": "https://meteostat.net/",
+      "station_id": "78526",
+      "provider": "daily",
+      "requested_start": "2000-01-01",
+      "requested_end": "2025-12-31",
+      "file": "meteostat_78526_2000-01-01_2025-12-31.csv",
+      "sha256": "c7db0787eabf8dcdfcfb801691235ec7c0075da2d88c78d24b74633356d42ca1",
+      "bytes": 450610,
+      "retrieved_utc": "2026-10-28T14:26:28.939169+00:00"
     }
   ]
 }

@@ -3,9 +3,9 @@
 Source: Project4_Climate_Analysis.pdf, sections 3-13. This tracker records requirements, not completed results.
 
 ## Phase 1 — Weeks 1-2
-- [ ] Acquire all four datasets, including a confirmed local station.
+- [x] Acquire all four datasets, including station 78526 for UAGM Gurabo (2000-2025).
 - [ ] Report years, locations, shape/head, missingness and uncertainty columns for every source.
-- [ ] Validate ten cities across continents and >=20 years of local daily station coverage.
+- [x] Validate ten cities across continents and >=20 years of local daily station coverage (25 years >=90% tmax coverage; source limitations documented).
 - [x] Plot global annual temperature since 1850 with a 10-year rolling mean.
 - [x] Plot CO2, monthly cycles for three contrasting cities, rain frequency by Australian location.
 - [x] Calculate 1951-1980 temperature anomalies; include >=6 labelled, interpreted EDA figures (seven saved in first checkpoint).

@@ -1,14 +1,14 @@
 # Decisions and unresolved inputs
 
 ## Confirmed
-- Private GitHub repository, owner `Edariel22`; teammate `pologram1`.
+- GitHub repository owner `Edariel22`; teammate `pologram1` has write access. Initially private; observed public on 2026-10-28. No visibility change was made during station selection.
+- Campus confirmed: UAGM Gurabo. Working station: Meteostat 78526, San Juan International, about 21.3 km away; see STATION_SELECTION.md.
 - Google Colab for the shared Jupyter notebook.
 - Preserve the supplied five-page report draft and its LaTeX source.
 - Follow the assignment's five phases; present the final notebook in its mandated nine-section order.
 
 ## Pending user input
 - Team number, both students' full names and institutional details.
-- Campus (or campus coordinates), to choose a nearby station with at least 20 years of usable observations.
 - Teammate Google email for edit access to the shared Colab file.
 - Instructor GitHub username and final submission date.
 - Course policy on AI assistance, so the contribution statement accurately discloses assistance.
@@ -25,4 +25,4 @@
 - Use autocorrelation-aware confidence intervals for warming trends; station annual heat counts must report observed-day coverage and rates.
 
 ## Report review
-The supplied PDF has five pages; the final requirement is 8-12 pages. It still contains author, data, result and contribution placeholders. Related work needs at least four substantive cited papers/reports. It says the workflow is public, which must be revised for the confirmed private repository. Preserve the original draft as provenance; do not invent findings or author contributions.
+The supplied PDF has five pages; the final requirement is 8-12 pages. It still contains author, data, result and contribution placeholders. Related work needs at least four substantive cited papers/reports. Its public-workflow wording now agrees with the repository visibility observed on 2026-10-28; keep this aligned with the final sharing decision. Preserve the original draft as provenance; do not invent findings or author contributions.

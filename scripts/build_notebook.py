@@ -25,9 +25,9 @@ md("""# 1. Title, team members and summary
 
 **Status:** setup and Phase 1 checkpoint; later experiments are pending.
 **Team:** number and full names pending (GitHub: Edariel22 and pologram1).
-**Repository:** https://github.com/Edariel22/Project4_Climate_Analysis (private).
+**Repository:** https://github.com/Edariel22/Project4_Climate_Analysis (currently public).
 
-This working notebook establishes reproducible data acquisition, checks coverage and missingness, computes 1951-1980 temperature anomalies and begins the required EDA. It does not yet report trained-model results. Replace this paragraph with a one-paragraph summary of measured findings at final submission. The local station remains pending campus confirmation.
+This working notebook establishes reproducible data acquisition, checks coverage and missingness, computes 1951-1980 temperature anomalies and begins the required EDA. It does not yet report trained-model results. Replace this paragraph with a one-paragraph summary of measured findings at final submission. The selected local reference is Meteostat station 78526, about 21.3 km from UAGM Gurabo, with data for 2000-2025. See the station-selection note for coverage and source limitations.
 
 The nine top-level sections follow D1 exactly. Work progresses through Phases 1-5 in the assignment; the presentation order places unsupervised analysis before supervised models. See `docs/PROJECT_CHECKLIST.md` in GitHub for the complete requirement map.
 """)
@@ -57,7 +57,7 @@ from importlib.metadata import version
 np.random.seed(SEED)
 sns.set_theme(style='whitegrid', context='notebook')
 plt.rcParams.update({'figure.figsize': (10, 4), 'figure.dpi': 110})
-STATION_ID = None  # Set only after campus selection and >=20-year coverage validation.
+STATION_ID = '78526'  # UAGM Gurabo regional reference; 25 years with >=90% tmax coverage.
 STATION_START, STATION_END = '2000-01-01', '2025-12-31'
 print({package: version(package) for package in ['numpy', 'pandas', 'scikit-learn', 'meteostat', 'kagglehub']})
 paths = acquire_data(ROOT, STATION_ID, STATION_START, STATION_END)
@@ -84,9 +84,27 @@ else:
     display(station.head())
     display(station.isna().mean().to_frame('missing_fraction'))
 """)
+md("""### UAGM Gurabo station: selection and quality
+
+Station **78526 / TJSJ**, San Juan International Airport, is approximately **21.3 km** from the campus reference. We requested **2000-2025**, a 26-year period. It is the closer of two stations returned by the Meteostat catalog within 50 km; the alternative has only about five years of daily data.
+
+This coastal station is a regional reference, not an on-campus instrument. Data use Meteostat's aggregated `Provider.DAILY` product, which is not certified observation-only. No application-level interpolation was used. See [selection and provenance notes](https://github.com/Edariel22/Project4_Climate_Analysis/blob/main/docs/STATION_SELECTION.md).
+""")
+code("""station_calendar = station.set_index('time').sort_index().reindex(pd.date_range(STATION_START, STATION_END, freq='D'))
+station_calendar.index.name = 'time'
+valid_tmax = station_calendar.tmax.notna()
+station_annual_coverage = pd.DataFrame({'valid_tmax': valid_tmax.resample('YS').sum(), 'expected_days': valid_tmax.resample('YS').size()})
+station_annual_coverage['coverage'] = station_annual_coverage.valid_tmax / station_annual_coverage.expected_days
+print(f'Valid tmax: {valid_tmax.sum():,}/{len(valid_tmax):,} days ({valid_tmax.mean():.1%})')
+print('Years with >=90% tmax coverage:', (station_annual_coverage.coverage >= 0.90).sum())
+display(station_annual_coverage)
+display(station_calendar.isna().mean().to_frame('missing_fraction_calendar'))
+station_annual_coverage.to_csv(ROOT / 'docs/station_coverage_78526.csv', index_label='year_start')
+display(Markdown('**Quality note:** 2009 has only 66.3% maximum-temperature coverage. Later heat-trend analysis must flag low-coverage years and report observed-day rates alongside counts. The 90% annual completeness threshold is our quality-control choice.'))
+""")
 md("""# 3. Exploratory data analysis
 
-Phase 1: at least six figures, each followed by an interpretation. This checkpoint uses actual observed data only. Local heat-frequency EDA will be added after the campus station is confirmed. Early temperature estimates and uncertainty columns must be discussed; no gaps are silently interpolated.
+Phase 1: at least six figures, each followed by an interpretation. This checkpoint uses actual observed data only. Local heat-frequency analysis will be added in Phase 5; station coverage is checked below. Early temperature estimates and uncertainty columns must be discussed; no gaps are silently interpolated.
 """)
 code("""annual = annual_anomalies(glob)
 def save_figure(name):
@@ -151,7 +169,7 @@ Phase 1 documents the prescribed boundaries; model fitting begins in later phase
 - Global trends: use 1850 onward, compare 1850–1974 and 1975–latest available. Align annual CO₂ from 1958 onward.
 - Monthly forecasting: training target dates through 2000, test target dates 2001–2013. TimeSeriesSplit only within training; fit imputers/scalers inside each model Pipeline. A direct 12-month target requires a 12-month purge at validation boundaries so training targets are observed by the issue date.
 - Rain: train dates through 2015, test dates from 2016. CV splits must operate on **unique dates**, keeping all locations on the same day together; a one-day purge protects next-day targets.
-- Heat: confirm a station with >=20 years; freeze a chronological test interval before modeling. Reindex the daily calendar before creating tomorrow's label. Keep missing tomorrow temperatures as missing targets.
+- Heat: use station 78526 (2000-2025); freeze a chronological test interval before modeling. Reindex the daily calendar before creating tomorrow's label. Keep missing tomorrow temperatures as missing targets.
 - The assignment's primary heat definition is the full-record 90th percentile; report a training-only-threshold sensitivity analysis separately.
 - No missing targets are imputed. Lag/rolling features must only use observations available at issuance. Never forward/back-fill across holdout boundaries.
 """)
@@ -217,7 +235,7 @@ Add feature importance (prefer held-out permutation importance where appropriate
 """)
 md("""# 9. Conclusions and limitations
 
-This checkpoint establishes data access and exploratory checks. Model performance and scientific conclusions remain unmeasured. Known limitations include historical source endpoints, incomplete months, source uncertainty, the station decision, non-random geographic coverage and the assignment's full-record heat threshold. The report currently contains methodological intentions and must be updated only from measured results.
+This checkpoint establishes data access and exploratory checks. Model performance and scientific conclusions remain unmeasured. Known limitations include historical source endpoints, incomplete months, source uncertainty, the coastal station's representativeness of inland Gurabo, mixed source provenance, non-random geographic coverage and the assignment's full-record heat threshold. The report currently contains methodological intentions and must be updated only from measured results.
 
 **Final checks:** all models tuned with temporal CV; no held-out tuning; all nine sections complete; full clean Colab/Kaggle run; source citations; both students' commits; IEEE report 8–12 pages; slides 10–12 pages; instructor access. See GitHub's requirements tracker.
 

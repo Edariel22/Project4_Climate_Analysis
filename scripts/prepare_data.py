@@ -8,7 +8,7 @@ from src.project_setup import acquire_data, load_core, scan_cities, coverage, ci
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--station", help="Confirmed Meteostat station identifier")
+    parser.add_argument("--station", default="78526", help="Meteostat station identifier; default: verified Gurabo-area station 78526")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     paths = acquire_data(root, station_id=args.station)

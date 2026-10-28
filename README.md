@@ -1,6 +1,6 @@
 # Project 4 — Climate Analysis and Prediction
 
-Private course project for **Edariel22** and **pologram1**. Team number, full names, campus and instructor access are pending. This is the setup / Phase 1 checkpoint, not a finished analysis.
+Course project for **Edariel22** and **pologram1**. Campus: UAGM Gurabo. Team number, full names and instructor access are pending. The repository was initially private and was observed public on 2026-10-28. This is the setup / Phase 1 checkpoint, not a finished analysis.
 
 ## Start here
 
@@ -23,7 +23,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m jupyterlab notebooks/Project4_TeamTBD.ipynb
 ```
 
-On macOS/Linux use `.venv/bin/python`. In a fresh Colab runtime, Run all installs the pinned packages and downloads data directly. Campus/station configuration remains an explicit pending input; the notebook prints that status rather than fabricating local results. The full assignment cannot be considered complete until that dataset and later phases are finished.
+On macOS/Linux use `.venv/bin/python`. In a fresh Colab runtime, Run all installs the pinned packages and downloads data directly. The notebook uses station 78526 near UAGM Gurabo for 2000-2025. See `docs/STATION_SELECTION.md` for coverage and source limitations. Later modeling phases remain unfinished.
 
 ## Work sequence
 
@@ -53,4 +53,4 @@ The existing report has five pages and pending experiments. Preserve it as a sta
 
 The notebook executed all 13 code cells without errors on Windows/Python 3.13.2, generated seven EDA plots, and retained all nine required sections. `pip check` and three baseline/coverage unit tests passed. See [validation notes](docs/VALIDATION.md).
 
-The source scan covered 8,599,212 city rows and 3,510 city/geography keys. The ten working cities include La Plata as a documented replacement for Buenos Aires, which is absent from this source. Global monthly data end in 2015; city data end in 2013; Australian rain data end in 2017. Three sources are downloaded; Meteostat awaits the campus. Later model phases are explicitly pending.
+The source scan covered 8,599,212 city rows and 3,510 city/geography keys. The ten working cities include La Plata as a documented replacement for Buenos Aires, which is absent from this source. Global monthly data end in 2015; city data end in 2013; Australian rain data end in 2017. All four sources are now downloaded, including Meteostat station 78526 for 2000-2025. Later model phases are explicitly pending. See [student next steps](docs/TEAM_NEXT_STEPS.md) and [station selection](docs/STATION_SELECTION.md).

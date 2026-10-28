@@ -1,0 +1,28 @@
+[
+  {
+    "station_id": "78526",
+    "name": "San Juan / Int., Puerto Rico",
+    "distance_km": 21.2894,
+    "provider": "daily",
+    "start": "2000-01-01",
+    "end": "2025-12-31",
+    "returned_rows": 9445,
+    "expected_days": 9497,
+    "valid_tmax": 9278,
+    "coverage": 0.9769400863430557,
+    "years_at_least_90_percent": 25
+  },
+  {
+    "station_id": "TJIG0",
+    "name": "San Juan / Puerta de Tierra",
+    "distance_km": 25.733400000000003,
+    "provider": "daily",
+    "start": "2000-01-01",
+    "end": "2025-12-31",
+    "returned_rows": 1806,
+    "expected_days": 9497,
+    "valid_tmax": 1804,
+    "coverage": 0.18995472254396126,
+    "years_at_least_90_percent": 5
+  }
+]

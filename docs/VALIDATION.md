@@ -13,3 +13,10 @@ Validated on 2026-10-27 (America/La_Paz), using Windows and Python 3.13.2.
 - Local station acquisition is not complete because the campus is pending. Model training, tuning, test metrics, final report, final slides and instructor sharing are not claimed complete.
 
 Known report alignment items: the supplied draft is five pages; authors/team are placeholders; it calls the workflow public although the repository is private; its global-series wording must be aligned with the selected land-and-ocean primary analysis; and the city list must reflect La Plata. Original report files were preserved without invented results.
+
+## Station checkpoint — 2026-10-28
+
+- UAGM Gurabo confirmed. Selected Meteostat 78526 after comparing both catalog results within 50 km; documented distance, yearly coverage, weak year 2009 and source limitations.
+- Fourth dataset downloaded locally for 2000-2025. Calendar completeness: 9,278/9,497 valid daily maximum temperatures; 25 years with >=90% coverage.
+- Updated notebook executed all 14 code cells successfully, retaining all nine required sections. All three existing unit tests passed.
+- The original campus-pending status above is superseded by this entry. Hosted Colab execution, team identity fields and editor sharing remain pending; the Drive notebook was updated in place with the executed local checkpoint.

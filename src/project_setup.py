@@ -68,12 +68,13 @@ def acquire_data(root, station_id=None, start="2000-01-01", end="2025-12-31"):
         target = raw / f"meteostat_{station_id}_{start}_{end}.csv"
         if not target.exists():
             daily = ms.daily(ms.Station(id=str(station_id)), date.fromisoformat(start),
-                             date.fromisoformat(end)).fetch()
+                             date.fromisoformat(end), providers=[ms.Provider.DAILY]).fetch()
             if daily.empty:
                 raise ValueError(f"No daily observations for station {station_id}")
             daily.to_csv(target, index_label="time")
         paths["station"] = target
         records.append(dict(dataset="station", source="https://meteostat.net/", station_id=station_id,
+                            provider="daily",
                             requested_start=start, requested_end=end,
                             file=target.name, sha256=sha256(target), bytes=target.stat().st_size))
     manifest_path = raw / "manifest.json"
