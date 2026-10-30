@@ -1,0 +1,21 @@
+City,Country,Latitude,Longitude,cluster,city,Koppen
+Bangkok,Thailand,13.66,99.91,2,Bangkok,Aw
+Berlin,Germany,52.24,13.14,1,Berlin,Dfb
+Bombay,India,18.48,72.68,2,Bombay,Am
+Cairo,Egypt,29.74,31.38,2,Cairo,BWh
+Cape Town,South Africa,-32.95,18.19,0,Cape Town,Csb
+Chicago,United States,42.59,-87.27,1,Chicago,Dfa
+La Plata,Argentina,-34.56,-58.38,0,La Plata,Cfa
+Lima,Peru,-12.05,-77.26,0,Lima,BWh
+London,United Kingdom,52.24,-0.0,1,London,Cfb
+Los Angeles,United States,34.56,-118.7,1,Los Angeles,Csa
+Melbourne,Australia,-37.78,144.41,0,Melbourne,Cfb
+Moscow,Russia,55.45,36.85,1,Moscow,Dfb
+Nairobi,Kenya,-0.8,36.16,0,Nairobi,Cfb
+New York,United States,40.99,-74.56,1,New York,Dfa
+Paris,France,49.03,2.45,1,Paris,Cfb
+Peking,China,39.38,116.53,1,Peking,Dwa
+Singapore,Singapore,0.8,103.66,2,Singapore,Af
+Sydney,Australia,-34.56,151.78,0,Sydney,Cfa
+São Paulo,Brazil,-23.31,-46.31,0,São Paulo,Cfa
+Tokyo,Japan,36.17,139.23,1,Tokyo,Cfa

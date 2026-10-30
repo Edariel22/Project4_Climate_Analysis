@@ -1,0 +1,13 @@
+task,city,model,iterations,limit,iteration_limit_reached
+monthly forecast,Bombay,MLP,509,2500,False
+monthly forecast,Cairo,MLP,439,2500,False
+monthly forecast,Cape Town,MLP,525,2500,False
+monthly forecast,La Plata,MLP,581,2500,False
+monthly forecast,London,MLP,198,2500,False
+monthly forecast,New York,MLP,252,2500,False
+monthly forecast,Paris,MLP,302,2500,False
+monthly forecast,Sydney,MLP,433,2500,False
+monthly forecast,São Paulo,MLP,523,2500,False
+monthly forecast,Tokyo,MLP,194,2500,False
+Australia rain,,MLP,50,1500,False
+Local heat,,MLP,29,1500,False

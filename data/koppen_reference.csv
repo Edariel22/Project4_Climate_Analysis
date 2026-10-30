@@ -1,0 +1,21 @@
+City,Country,Latitude,Longitude,city_latitude,city_longitude,geonameid,Koppen,source
+Bangkok,Thailand,13.66,99.91,13.75398,100.50144,1609350,Aw,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Berlin,Germany,52.24,13.14,52.52437,13.41053,2950159,Dfb,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Bombay,India,18.48,72.68,19.07283,72.88261,1275339,Am,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Cairo,Egypt,29.74,31.38,30.06263,31.24967,360630,BWh,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Cape Town,South Africa,-32.95,18.19,-33.92584,18.42322,3369157,Csb,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Chicago,United States,42.59,-87.27,41.85003,-87.65005,4887398,Dfa,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+La Plata,Argentina,-34.56,-58.38,-34.92126,-57.95442,3432043,Cfa,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Lima,Peru,-12.05,-77.26,-12.04318,-77.02824,3936456,BWh,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+London,United Kingdom,52.24,-0.0,51.50853,-0.12574,2643743,Cfb,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Los Angeles,United States,34.56,-118.7,34.05223,-118.24368,5368361,Csa,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Melbourne,Australia,-37.78,144.41,-37.814,144.96332,2158177,Cfb,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Moscow,Russia,55.45,36.85,55.75204,37.61781,524901,Dfb,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Nairobi,Kenya,-0.8,36.16,-1.28333,36.81667,184745,Cfb,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+New York,United States,40.99,-74.56,40.71427,-74.00597,5128581,Dfa,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Paris,France,49.03,2.45,48.85341,2.3488,2988507,Cfb,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Peking,China,39.38,116.53,39.9075,116.39723,1816670,Dwa,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Singapore,Singapore,0.8,103.66,1.28967,103.85007,1880252,Af,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Sydney,Australia,-34.56,151.78,-33.86785,151.20732,2147714,Cfa,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+São Paulo,Brazil,-23.31,-46.31,-23.5475,-46.63611,3448439,Cfa,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre
+Tokyo,Japan,36.17,139.23,35.6895,139.69171,1850147,Cfa,Beck et al. (2023); Figshare 21789074 v2; 1961-1990; 0.1 degree; GeoNames city centre

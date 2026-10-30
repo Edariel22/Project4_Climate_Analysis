@@ -1,0 +1,117 @@
+task,city,model,convergence_warnings
+monthly forecast,Bombay,Linear,0
+monthly forecast,Bombay,Ridge,0
+monthly forecast,Bombay,Lasso,0
+monthly forecast,Bombay,Polynomial,0
+monthly forecast,Bombay,kNN,0
+monthly forecast,Bombay,Decision tree,0
+monthly forecast,Bombay,Random forest,0
+monthly forecast,Bombay,Gradient boosting,0
+monthly forecast,Bombay,SVR,0
+monthly forecast,Bombay,MLP,0
+monthly forecast,Cairo,Linear,0
+monthly forecast,Cairo,Ridge,0
+monthly forecast,Cairo,Lasso,0
+monthly forecast,Cairo,Polynomial,0
+monthly forecast,Cairo,kNN,0
+monthly forecast,Cairo,Decision tree,0
+monthly forecast,Cairo,Random forest,0
+monthly forecast,Cairo,Gradient boosting,0
+monthly forecast,Cairo,SVR,0
+monthly forecast,Cairo,MLP,0
+monthly forecast,Cape Town,Linear,0
+monthly forecast,Cape Town,Ridge,0
+monthly forecast,Cape Town,Lasso,0
+monthly forecast,Cape Town,Polynomial,0
+monthly forecast,Cape Town,kNN,0
+monthly forecast,Cape Town,Decision tree,0
+monthly forecast,Cape Town,Random forest,0
+monthly forecast,Cape Town,Gradient boosting,0
+monthly forecast,Cape Town,SVR,0
+monthly forecast,Cape Town,MLP,0
+monthly forecast,La Plata,Linear,0
+monthly forecast,La Plata,Ridge,0
+monthly forecast,La Plata,Lasso,0
+monthly forecast,La Plata,Polynomial,0
+monthly forecast,La Plata,kNN,0
+monthly forecast,La Plata,Decision tree,0
+monthly forecast,La Plata,Random forest,0
+monthly forecast,La Plata,Gradient boosting,0
+monthly forecast,La Plata,SVR,0
+monthly forecast,La Plata,MLP,0
+monthly forecast,London,Linear,0
+monthly forecast,London,Ridge,0
+monthly forecast,London,Lasso,0
+monthly forecast,London,Polynomial,0
+monthly forecast,London,kNN,0
+monthly forecast,London,Decision tree,0
+monthly forecast,London,Random forest,0
+monthly forecast,London,Gradient boosting,0
+monthly forecast,London,SVR,0
+monthly forecast,London,MLP,0
+monthly forecast,New York,Linear,0
+monthly forecast,New York,Ridge,0
+monthly forecast,New York,Lasso,0
+monthly forecast,New York,Polynomial,0
+monthly forecast,New York,kNN,0
+monthly forecast,New York,Decision tree,0
+monthly forecast,New York,Random forest,0
+monthly forecast,New York,Gradient boosting,0
+monthly forecast,New York,SVR,0
+monthly forecast,New York,MLP,0
+monthly forecast,Paris,Linear,0
+monthly forecast,Paris,Ridge,0
+monthly forecast,Paris,Lasso,0
+monthly forecast,Paris,Polynomial,0
+monthly forecast,Paris,kNN,0
+monthly forecast,Paris,Decision tree,0
+monthly forecast,Paris,Random forest,0
+monthly forecast,Paris,Gradient boosting,0
+monthly forecast,Paris,SVR,0
+monthly forecast,Paris,MLP,0
+monthly forecast,Sydney,Linear,0
+monthly forecast,Sydney,Ridge,0
+monthly forecast,Sydney,Lasso,0
+monthly forecast,Sydney,Polynomial,0
+monthly forecast,Sydney,kNN,0
+monthly forecast,Sydney,Decision tree,0
+monthly forecast,Sydney,Random forest,0
+monthly forecast,Sydney,Gradient boosting,0
+monthly forecast,Sydney,SVR,0
+monthly forecast,Sydney,MLP,0
+monthly forecast,São Paulo,Linear,0
+monthly forecast,São Paulo,Ridge,0
+monthly forecast,São Paulo,Lasso,0
+monthly forecast,São Paulo,Polynomial,0
+monthly forecast,São Paulo,kNN,0
+monthly forecast,São Paulo,Decision tree,0
+monthly forecast,São Paulo,Random forest,0
+monthly forecast,São Paulo,Gradient boosting,0
+monthly forecast,São Paulo,SVR,0
+monthly forecast,São Paulo,MLP,0
+monthly forecast,Tokyo,Linear,0
+monthly forecast,Tokyo,Ridge,0
+monthly forecast,Tokyo,Lasso,0
+monthly forecast,Tokyo,Polynomial,0
+monthly forecast,Tokyo,kNN,0
+monthly forecast,Tokyo,Decision tree,0
+monthly forecast,Tokyo,Random forest,0
+monthly forecast,Tokyo,Gradient boosting,0
+monthly forecast,Tokyo,SVR,0
+monthly forecast,Tokyo,MLP,0
+Australia rain,,Logistic,0
+Australia rain,,kNN,0
+Australia rain,,Naive Bayes,0
+Australia rain,,SVM,0
+Australia rain,,Decision tree,0
+Australia rain,,Random forest,0
+Australia rain,,Gradient boosting,0
+Australia rain,,MLP,0
+Local heat,,Logistic,0
+Local heat,,kNN,0
+Local heat,,Naive Bayes,0
+Local heat,,SVM,0
+Local heat,,Decision tree,0
+Local heat,,Random forest,0
+Local heat,,Gradient boosting,0
+Local heat,,MLP,0

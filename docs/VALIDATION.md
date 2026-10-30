@@ -1,31 +1,16 @@
-# Setup checkpoint validation
+# Corrected integrated notebook validation — 2026-10-30
 
-Validated on 2026-10-27 (America/La_Paz), using Windows and Python 3.13.2.
+- All 27 code cells executed sequentially in one new IPython process with cached source data. No error outputs occurred. A networked Jupyter kernel could not start in this execution environment, so an in-process IPython executor was used; this is not a verified fresh Google-hosted Colab download run.
+- Nine main sections are in the exact D1 order; all model families have explicit subsections. Saved outputs include figures, tables, explanations, feature importance, error analysis and measured conclusions.
+- Ten cities × (ten regressors + baseline) = 110 monthly comparison rows; twelve-month Ridge/baseline = 20 rows; eight classifiers for each event task; seven predictive global specifications and two descriptive climate diagnostic rows. The combined CSV has 155 rows.
+- Full-record heat threshold = 32.2°C. It happens to equal this source snapshot's training-period percentile, so the definition correction does not change these labels. Annual count and observed-day rate trends retain years with ≥90% tmax coverage.
+- All 20 Köppen profiles match sourced classes; world-map baselayer, elbow/silhouette and PCA loadings are present. ARI 0.0596 is weak agreement, not a model-execution failure.
+- Increased MLP iteration budgets; zero convergence warnings were recorded across the searches and zero selected MLP fits reached their iteration limits. Exact iteration counts are exported.
+- CV determines reporting models. Calendar-grouped rain/heat CV prevents a date crossing a fold boundary. All predictive transformations are within Pipelines. The required full-record heat label is explicitly retrospective.
+- Map, permutation-importance and residual figures were visually reviewed. Dataset snapshots are hashed in outputs/source_manifest.json; exact analysis versions are recorded and pinned.
+- The title summary, final conclusions and report_facts.json use actual executed metrics. Global test R² values are negative and are explicitly discussed; no predictive success is inferred from in-sample fits.
+- Source records are provider products; Meteostat DAILY does not establish observation-only provenance. San Juan International is regional, not a campus instrument.
 
-- Isolated `.venv` installed from pinned `requirements.txt`; `pip check` reports no broken requirements. Full tested Windows dependency snapshot saved in `requirements-lock-windows.txt`.
-- All 13 code cells in the 35-cell notebook executed top to bottom without errors using nbclient and the project kernel. All nine required top-level sections are present. Later model sections explicitly state that experiments are pending.
-- Three targeted unit tests pass: baseline anomalies, rejection of an incomplete baseline, and coverage/missingness counting. These use synthetic fixtures only, not synthetic project results.
-- All three available data sources loaded from official downloads. Kaggle source versions verified as 2; the notebook's KaggleHub download method was tested separately on the global CSV. NOAA snapshot runs through September 2026. SHA256 provenance is in `data_manifest.json`; raw data remain local and ignored.
-- City file scanned in chunks: 8,599,212 rows / 3,510 distinct city-country-coordinate keys. All ten working city/country selections exist after replacing missing Buenos Aires with La Plata. Check `city_coverage.csv` for valid test months.
-- Seven labelled EDA figures generated, with interpretations in the notebook. Rain-frequency and seasonal-cycle figures visually checked for legibility.
-- `git check-ignore` confirms the virtual environment, raw datasets and processed data are excluded.
-- Local execution is verified. The notebook has been uploaded to Colab with outputs; a fresh Google-hosted runtime has not yet been tested. Teammate sharing is pending their Google email.
-- Local station acquisition is not complete because the campus is pending. Model training, tuning, test metrics, final report, final slides and instructor sharing are not claimed complete.
+## Remaining deliverables
 
-Known report alignment items: the supplied draft is five pages; authors/team are placeholders; it calls the workflow public although the repository is private; its global-series wording must be aligned with the selected land-and-ocean primary analysis; and the city list must reflect La Plata. Original report files were preserved without invented results.
-
-## Station checkpoint — 2026-10-28
-
-- UAGM Gurabo confirmed. Selected Meteostat 78526 after comparing both catalog results within 50 km; documented distance, yearly coverage, weak year 2009 and source limitations.
-- Fourth dataset downloaded locally for 2000-2025. Calendar completeness: 9,278/9,497 valid daily maximum temperatures; 25 years with >=90% coverage.
-- Updated notebook executed all 14 code cells successfully, retaining all nine required sections. All three existing unit tests passed.
-- The original campus-pending status above is superseded by this entry. Hosted Colab execution, team identity fields and editor sharing remain pending; the Drive notebook was updated in place with the executed local checkpoint.
-
-## Integrated notebook organization — 2026-10-30
-
-- The team reports successful execution of its integrated notebook. The attachment supplied for this update contains 20 code cells, all with null execution counts and no saved outputs.
-- Current entry point: `notebooks/ProjectX_Team4.ipynb`. All nine required main sections are numbered in order. Markdown was reorganized; every uploaded code cell was preserved exactly.
-- JSON/notebook schema, all code-cell syntax (with notebook magic handled), and the ordered nine-section structure were checked. Models were not rerun in this update.
-- Corrected a markdown claim of an implemented 12-month-horizon experiment: the uploaded code implements rolling one-month forecasts only.
-- README and data instructions now describe the integrated notebook; earlier checkpoint files and code remain available. The detailed current assessment is in `docs/RUBRIC_ALIGNMENT.md`.
-- Successful execution is distinct from rubric completion. Saved results, sourced Köppen comparison, 12-month forecast, master table, interpretation, final report and slides remain outstanding.
+Confirm both author names (Elias's surname is still missing), write the IEEE report and contribution statement, prepare slides/demo, verify instructor access, and rehearse. The notebook is ready to serve as the analytical basis for the report, subject to those identity and submission checks. Prepared with Codex assistance.

@@ -1,0 +1,11 @@
+{
+  "run_mode": "full",
+  "regression_cities": 10,
+  "regression_rows": 110,
+  "rain_models": 8,
+  "heat_models": 8,
+  "koppen_cities": 20,
+  "koppen_adjusted_rand": 0.05955143078112916,
+  "master_comparison_rows": 155,
+  "selected_mlp_iteration_limit_hits": 0
+}

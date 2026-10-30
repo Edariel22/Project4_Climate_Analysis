@@ -1,0 +1,42 @@
+[
+  {
+    "filename": "GlobalTemperatures.csv",
+    "size_bytes": 205875,
+    "sha256": "eb05b7c1d6dd0bb4c49849e08e23f9015a4f7435d53b640ca2a7817d122a97b5"
+  },
+  {
+    "filename": "GlobalLandTemperaturesByCity.csv",
+    "size_bytes": 532830464,
+    "sha256": "9be86b51487f10e811a0ab43a75946739dfe7bea2342ddcd1f6bc48d51b8c493"
+  },
+  {
+    "filename": "weatherAUS.csv",
+    "size_bytes": 14094055,
+    "sha256": "573fd715cd69fcacc4df32024d823b450ae3edaae7e8ff2eeb623adbed424014"
+  },
+  {
+    "filename": "co2_mm_mlo.csv",
+    "size_bytes": 38776,
+    "sha256": "d895fb5b4a59fb5e4cd98e69b7667fe5bef595c6581f630852b12cb41c07f675"
+  },
+  {
+    "filename": "meteostat_78526_2000-2025.csv",
+    "size_bytes": 441164,
+    "sha256": "3fc2c1052c7fe00f26d512be12d1d94d49e6d4590b4253685e257f12162c3d60"
+  },
+  {
+    "filename": "koppen_1961_1990_0p1.tif",
+    "size_bytes": 217868,
+    "sha256": "0b4a5e41879efccf2e14e53c09f046d6ea048aa03ae232657143e8d1884db6b8"
+  },
+  {
+    "filename": "cities15000.zip",
+    "size_bytes": 3364684,
+    "sha256": "449edf72e23bbb81532f5617bca2ba2e37357304ab6db34733a19a325add3f7d"
+  },
+  {
+    "filename": "ne_110m_admin_0_countries.geojson",
+    "size_bytes": 838726,
+    "sha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f"
+  }
+]

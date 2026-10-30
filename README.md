@@ -1,31 +1,29 @@
 # Project 4 — Climate Analysis and Prediction
 
 **Team 4 · Introduction to Machine Learning with Python · UAGM Gurabo**  
-Miguel De Jesus Rosa and Elias (surname to confirm).
+Miguel De Jesus Rosa and Elias (team to confirm full surname).
 
-Analyze warming and CO₂, forecast temperatures for ten cities, discover climate groups, and predict Australian rain and local heat events using observed data.
+Historical warming and CO₂, one- and twelve-month city forecasts, climate clustering, and next-day rain/heat prediction.
 
-[**Open main notebook**](notebooks/ProjectX_Team4.ipynb) · [**Run in Google Colab**](https://colab.research.google.com/github/Edariel22/Project4_Climate_Analysis/blob/main/notebooks/ProjectX_Team4.ipynb) · [**Assignment**](Project4_Climate_Analysis.pdf) · [**Rubric alignment**](docs/RUBRIC_ALIGNMENT.md)
+[**Executed notebook**](notebooks/ProjectX_Team4.ipynb) · [**Run in Colab**](https://colab.research.google.com/github/Edariel22/Project4_Climate_Analysis/blob/main/notebooks/ProjectX_Team4.ipynb) · [**Results table**](outputs/phase1/master_model_comparison.csv) · [**Assignment**](Project4_Climate_Analysis.pdf)
 
-## Nine notebook sections
+| Section | Contents |
+|---|---|
+| 1. Title, team and summary | Actual measured findings and research questions |
+| 2. Imports, configuration and data | Source downloads, coverage, missingness and class balance |
+| 3. EDA | Seven plots, each interpreted from observed data |
+| 4. Preprocessing and splits | Training pipelines, chronological splits and date-grouped CV |
+| 5. Unsupervised analysis | PCA, K-Means, world map and sourced 20-city Köppen comparison |
+| 6. Supervised models | Model-specific subsections, tuning, ten-city forecasts, eight rain/heat classifiers |
+| 7. Comparison | One task-labelled master table, baseline skill, forecast/ROC plots and confusion matrices |
+| 8. Interpretation | Permutation importance, residuals, event errors and research-question answers |
+| 9. Conclusions | Measured conclusions, limitations, citations and reproducibility |
 
-| # | Section | Contents |
-|---|---|---|
-| 1 | Title, team and summary | Research scope, authors and results-summary status |
-| 2 | Imports, configuration and data loading | Downloads, four sources, ten cities and station 78526 |
-| 3 | Exploratory data analysis | Seven plots, missingness and 1951–1980 anomalies |
-| 4 | Preprocessing and splits | Pipelines, chronological train/test periods and temporal CV |
-| 5 | Unsupervised analysis | 1961–1990 normals, PCA, K-Means and cluster diagnostics |
-| 6 | Supervised models | Warming models, ten regressors and eight rain/heat classifiers |
-| 7 | Comparison tables and plots | Scores, CV, hyperparameters, timings and forecast/ROC plots |
-| 8 | Interpretation and error analysis | Computed model summaries and discussion prompts |
-| 9 | Conclusions and limitations | Constraints, reproducibility and final conclusions |
+## Reproduce
 
-## Run
+Colab: open the link, choose Python 3 CPU, run all. Downloads require internet. Cached files are reused; the final cell offers a results ZIP. The notebook installs compatible version ranges; `requirements.txt` pins the exact analysis packages used in the saved run.
 
-**Colab:** open the link above, select a Python 3 runtime and run all cells. Downloads require internet access. The notebook installs acquisition packages; model libraries are available in Colab. See [data instructions](data/README.md) for source links and the additional Köppen reference requirement.
-
-**Local Jupyter:** use Python 3.12 or 3.13 and the pinned dependencies:
+Local Python 3.12:
 
 ```bash
 python -m venv .venv
@@ -35,19 +33,17 @@ python -m pip install -r requirements.txt
 python -m jupyterlab notebooks/ProjectX_Team4.ipynb
 ```
 
-Run from top to bottom. Files are written relative to the kernel's working directory: `data/raw/`, `figures/` and `outputs/phase1/` (including later-phase comparison CSVs). Save the executed notebook and copy final figures/tables into the repository before submission. The notebook's `%pip` setup uses unpinned package names; `requirements.txt` is the pinned local environment, not a captured lock of the team's Colab run.
+Run cells in order. Data and outputs are relative to the kernel working directory. The recorded validation used a clean in-process IPython namespace and cached source files; a fresh Google-hosted Colab acquisition run has not been independently verified in this update.
 
-## Repository guide
+## Evidence and deliverables
 
-| Path | Purpose |
-|---|---|
-| `notebooks/ProjectX_Team4.ipynb` | Current integrated notebook; nine sections in assignment order |
-| `notebooks/Project4_TeamTBD.ipynb` | Earlier executed Phase 1 checkpoint, retained for reference |
-| `data/README.md` | Download instructions; raw data are excluded |
-| `figures/` | Existing EDA figures; update from the final run |
-| `docs/RUBRIC_ALIGNMENT.md` | Evidence and remaining requirements, mapped to the handout |
-| `report/` | Existing IEEE draft and source; final PDF still required |
-| `slides/` | Presentation destination; final PDF still required |
-| `src/`, `scripts/`, `tests/` | Earlier setup utilities and checks; not required by the integrated notebook |
+- `notebooks/ProjectX_Team4.ipynb`: current notebook with saved outputs; the older `Project4_TeamTBD.ipynb` is retained as historical Phase 1 work.
+- `outputs/phase1/`: all phase tables, CV/timing evidence, baseline skill, residuals, coverage and convergence audits. Despite the directory name, it includes Phases 1–5.
+- `outputs/report_facts.json`: measured values for writing the report; `outputs/tested_versions.json`: executed package versions.
+- `figures/`: generated EDA, forecasts, clustering world map, ROC, feature-importance and error-analysis PNGs.
+- [Data instructions](data/README.md), [rubric alignment](docs/RUBRIC_ALIGNMENT.md), [validation](docs/VALIDATION.md).
+- `report/` and `slides/`: existing drafts/destinations; the final IEEE report and presentation are separate remaining deliverables.
 
-**Submission status:** the team reports successful execution. The uploaded integrated notebook has no saved outputs. Structure and code syntax were checked; a new full model run was not performed for this repository update. The final results summary, several analytical requirements, IEEE report and slides remain outstanding; see the [rubric checklist](docs/RUBRIC_ALIGNMENT.md). Earlier planning documents describe historical checkpoints.
+The heat label uses the handout's full-record 90th percentile. The station is San Juan International, a regional coastal reference rather than a campus sensor. Rain uses at most 24,000 time-spaced training rows and the full holdout. Twelve-month Ridge is a separate experiment from the ten-model one-month comparison. Descriptive climate diagnostics and predictive held-out scores are labelled separately; CV selects reporting models. See the notebook for source/provenance limitations and convergence evidence.
+
+Notebook corrections and this repository update were prepared with Codex assistance. Both students must verify names, contributions and course-policy compliance before final submission.

@@ -1,0 +1,19 @@
+{
+  "mean_cv_selected_city_MAE": 0.8546705392358621,
+  "twelve_month_mean_city_MAE_skill": 0.21288012693322078,
+  "rain_model": "SVM",
+  "rain_F1": 0.6404944167427488,
+  "rain_AUC": 0.8691867334268856,
+  "heat_model": "Random forest",
+  "heat_F1": 0.4925575101488498,
+  "heat_AUC": 0.877739580002132,
+  "heat_threshold": 32.2,
+  "heat_days_slope": 0.8455468491336647,
+  "heat_rate_percentage_points_slope": 0.22029009936735283,
+  "koppen_ARI": 0.05955143078112916,
+  "k": 3,
+  "pca_explained_variance": 0.9659112085583964,
+  "warming_pre1975": 0.035998397337429565,
+  "warming_post1975": 0.16417044134727082,
+  "selected_mlp_limit_hits": 0
+}
