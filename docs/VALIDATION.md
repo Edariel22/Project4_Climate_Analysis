@@ -20,3 +20,12 @@ Known report alignment items: the supplied draft is five pages; authors/team are
 - Fourth dataset downloaded locally for 2000-2025. Calendar completeness: 9,278/9,497 valid daily maximum temperatures; 25 years with >=90% coverage.
 - Updated notebook executed all 14 code cells successfully, retaining all nine required sections. All three existing unit tests passed.
 - The original campus-pending status above is superseded by this entry. Hosted Colab execution, team identity fields and editor sharing remain pending; the Drive notebook was updated in place with the executed local checkpoint.
+
+## Integrated notebook organization — 2026-10-30
+
+- The team reports successful execution of its integrated notebook. The attachment supplied for this update contains 20 code cells, all with null execution counts and no saved outputs.
+- Current entry point: `notebooks/ProjectX_Team4.ipynb`. All nine required main sections are numbered in order. Markdown was reorganized; every uploaded code cell was preserved exactly.
+- JSON/notebook schema, all code-cell syntax (with notebook magic handled), and the ordered nine-section structure were checked. Models were not rerun in this update.
+- Corrected a markdown claim of an implemented 12-month-horizon experiment: the uploaded code implements rolling one-month forecasts only.
+- README and data instructions now describe the integrated notebook; earlier checkpoint files and code remain available. The detailed current assessment is in `docs/RUBRIC_ALIGNMENT.md`.
+- Successful execution is distinct from rubric completion. Saved results, sourced Köppen comparison, 12-month forecast, master table, interpretation, final report and slides remain outstanding.

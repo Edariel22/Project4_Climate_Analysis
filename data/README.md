@@ -1,20 +1,22 @@
-# Data access and provenance
+# Data acquisition
 
-Run the acquisition cell in the notebook, or `python scripts/prepare_data.py` from the repository root. Source data are cached under `data/raw/` and excluded from Git. Do not commit Kaggle credentials, tokens or downloaded CSVs. The first city download is large (hundreds of MB).
+The integrated notebook downloads data into `data/raw/` relative to its kernel working directory. Internet access is required. Keep raw data out of GitHub.
 
-| Source | Required files / role | Official access |
+| Source | Files / selection | Access |
 |---|---|---|
-| Berkeley Earth via Kaggle | GlobalTemperatures.csv and GlobalLandTemperaturesByCity.csv | https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data |
-| NOAA GML / Scripps | co2_mm_mlo.csv; monthly ppm | https://gml.noaa.gov/ccgg/trends/data.html |
-| Rain in Australia, jsphyg | weatherAUS.csv | https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package |
-| Meteostat | Daily observations for a confirmed local station | https://dev.meteostat.net/python/ |
+| Berkeley Earth / Kaggle | `GlobalTemperatures.csv`, `GlobalLandTemperaturesByCity.csv`; version 2 | https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data |
+| NOAA Mauna Loa | `co2_mm_mlo.csv`; negative sentinel values become missing | https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.csv |
+| Rain in Australia / Kaggle | `weatherAUS.csv`; version 2 | https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package |
+| Meteostat | Station `78526`, daily 2000–2025, `meteostat_78526_2000-2025.csv` | https://meteostat.net/ ; see [station audit](../docs/STATION_SELECTION.md) |
 
-Selected station for UAGM Gurabo: **78526 / TJSJ (San Juan International Airport)**, approximately 21.3 km from campus. Download period: **2000-2025**. The default preparation script now includes it. See [station selection](../docs/STATION_SELECTION.md) for the candidate comparison, calendar-based coverage and mixed-source provenance caveat. The full-record heat threshold will refer to this explicitly selected period.
+Kaggle downloads use `kagglehub`. If acquisition fails, obtain the source files above and place them in the notebook's `data/raw/` folder. Do not commit API keys or credentials. Meteostat download errors are printed; confirm the local station is available before treating Phase 5 as complete. See each provider for attribution, license and redistribution conditions.
 
-`kagglehub.dataset_download` retrieves version 2 of each public Kaggle source. The initial local snapshot was downloaded through Kaggle's official API; the notebook's KaggleHub method was separately verified on the global CSV. Some environments may require Kaggle authentication or acceptance of dataset terms; never embed credentials in the notebook. Download failures are errors, not permission to substitute made-up data. NOAA is downloaded directly. Meteostat 2.1.5 uses `meteostat.daily(...).fetch()`, rather than the older `Daily` class in the handout.
+**Forecasting cities:** New York, London, Paris, Cairo, Bombay (historical Mumbai identifier), Tokyo, Sydney, Cape Town, São Paulo and La Plata. La Plata replaces Buenos Aires, which is absent from the selected file.
 
-The raw manifest records retrieval timestamps, resolved Kaggle cache paths (including source version when available), file sizes and SHA256 hashes. Preserve this local snapshot for exact reproduction: NOAA and live provider data can be revised. A new download from a live source is not guaranteed byte-identical. Public aggregate coverage is saved under `docs/`.
+**Additional PCA/K-Means cities:** Los Angeles, Chicago, Berlin, Moscow, Beijing, Bangkok, Singapore, Melbourne, Lima and Nairobi. Confirm all 20 have complete reference climatologies.
 
-Licensing: the handout identifies NOAA as public-domain data and Meteostat as CC BY 4.0. Cite NOAA GML/Scripps and Meteostat plus upstream providers as applicable; verify the Kaggle dataset-page terms before redistribution. This repository does not redistribute raw data.
+**Köppen reference:** the notebook does not download this file. Supply an independently verified `data/raw/koppen_reference.csv` with `City,Country,Koppen` columns matching all 20 cities exactly. Record a source citation and classification reference period for each entry, either in additional columns or accompanying documentation. Without it, the notebook prints a pending comparison message.
 
-City processing scans the full file in chunks. It retains all dates for the ten named city/country pairs and aggregates 1961-1990 climatologies across all cities. Clustering eligibility requires >=24 valid observations for each calendar month; no random sampling is used. Report names, coordinates, eligible/excluded counts and actual date coverage.
+Global anomalies use 30 complete years in 1951–1980. Climate profiles use 1961–1990. City training ends in 2000 (test 2001–2013); rain training ends in 2015 (test from 2016). Local heat holds out the final five years. Source periods differ; do not describe all series as extending to the current year.
+
+Generated audit and comparison CSVs are written under `outputs/phase1/`; PNGs under `figures/`. Existing repository figures are from the earlier EDA checkpoint. Replace or supplement them only with actual outputs from the final executed analysis.

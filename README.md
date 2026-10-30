@@ -1,56 +1,53 @@
 # Project 4 — Climate Analysis and Prediction
 
-Course project for **Edariel22** and **pologram1**. Campus: UAGM Gurabo. Team number, full names and instructor access are pending. The repository was initially private and was observed public on 2026-10-28. This is the setup / Phase 1 checkpoint, not a finished analysis.
+**Team 4 · Introduction to Machine Learning with Python · UAGM Gurabo**  
+Miguel De Jesus Rosa and Elias (surname to confirm).
 
-## Start here
+Analyze warming and CO₂, forecast temperatures for ten cities, discover climate groups, and predict Australian rain and local heat events using observed data.
 
-- Main notebook: `notebooks/Project4_TeamTBD.ipynb` (nine required sections; self-contained for Colab).
-- [Open the working Google Colab notebook](https://colab.research.google.com/drive/1bxJwRP9GDeVZaYjFXlZ26LtowNxhBNil). Uploaded with executed outputs; teammate edit access is pending their Google email.
-- [Open the versioned GitHub notebook in Colab](https://colab.research.google.com/github/Edariel22/Project4_Climate_Analysis/blob/main/notebooks/Project4_TeamTBD.ipynb). Private-repository access may require signing into GitHub in Colab.
-- [Full assignment checklist](docs/PROJECT_CHECKLIST.md), [decisions and pending inputs](docs/DECISIONS.md), [proposal draft](docs/PROPOSAL_DRAFT.md), [collaboration workflow](docs/COLLABORATION.md).
-- [Data download instructions](data/README.md). Do not commit raw data or credentials.
+[**Open main notebook**](notebooks/ProjectX_Team4.ipynb) · [**Run in Google Colab**](https://colab.research.google.com/github/Edariel22/Project4_Climate_Analysis/blob/main/notebooks/ProjectX_Team4.ipynb) · [**Assignment**](Project4_Climate_Analysis.pdf) · [**Rubric alignment**](docs/RUBRIC_ALIGNMENT.md)
 
-## Local setup (Windows PowerShell)
+## Nine notebook sections
 
-Use Python 3.12 or 3.13. A virtual environment avoids modifying your other projects.
+| # | Section | Contents |
+|---|---|---|
+| 1 | Title, team and summary | Research scope, authors and results-summary status |
+| 2 | Imports, configuration and data loading | Downloads, four sources, ten cities and station 78526 |
+| 3 | Exploratory data analysis | Seven plots, missingness and 1951–1980 anomalies |
+| 4 | Preprocessing and splits | Pipelines, chronological train/test periods and temporal CV |
+| 5 | Unsupervised analysis | 1961–1990 normals, PCA, K-Means and cluster diagnostics |
+| 6 | Supervised models | Warming models, ten regressors and eight rain/heat classifiers |
+| 7 | Comparison tables and plots | Scores, CV, hyperparameters, timings and forecast/ROC plots |
+| 8 | Interpretation and error analysis | Computed model summaries and discussion prompts |
+| 9 | Conclusions and limitations | Constraints, reproducibility and final conclusions |
 
-`requirements.txt` pins portable direct dependencies; `requirements-lock-windows.txt` records every installed package in the tested Windows/Python 3.13 environment. Use the portable file in Colab because the Windows lock includes platform-specific packages.
+## Run
 
-```powershell
+**Colab:** open the link above, select a Python 3 runtime and run all cells. Downloads require internet access. The notebook installs acquisition packages; model libraries are available in Colab. See [data instructions](data/README.md) for source links and the additional Köppen reference requirement.
+
+**Local Jupyter:** use Python 3.12 or 3.13 and the pinned dependencies:
+
+```bash
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe scripts/prepare_data.py
-.\.venv\Scripts\python.exe -m jupyterlab notebooks/Project4_TeamTBD.ipynb
+# macOS/Linux: source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m jupyterlab notebooks/ProjectX_Team4.ipynb
 ```
 
-On macOS/Linux use `.venv/bin/python`. In a fresh Colab runtime, Run all installs the pinned packages and downloads data directly. The notebook uses station 78526 near UAGM Gurabo for 2000-2025. See `docs/STATION_SELECTION.md` for coverage and source limitations. Later modeling phases remain unfinished.
+Run from top to bottom. Files are written relative to the kernel's working directory: `data/raw/`, `figures/` and `outputs/phase1/` (including later-phase comparison CSVs). Save the executed notebook and copy final figures/tables into the repository before submission. The notebook's `%pip` setup uses unpinned package names; `requirements.txt` is the pinned local environment, not a captured lock of the team's Colab run.
 
-## Work sequence
+## Repository guide
 
-1. **Setup / EDA:** acquire and profile all four sources; global temperature/CO₂/city/rain plots; 1951–1980 anomalies.
-2. **Trend models:** global linear/polynomial fits, pre/post-1975 slopes and CI, Ridge/Lasso with and without CO₂.
-3. **Forecasting:** ten cities, temporal CV, all ten regressors and a seasonal-naive baseline, 2001–2013 holdout and true 12-month horizons.
-4. **Climate zones:** 1961–1990 climatologies, PCA, k-Means, world map and 20-city Köppen comparison.
-5. **Events:** all eight classifiers for Australian rain and local heat; annual heat-frequency trend.
+| Path | Purpose |
+|---|---|
+| `notebooks/ProjectX_Team4.ipynb` | Current integrated notebook; nine sections in assignment order |
+| `notebooks/Project4_TeamTBD.ipynb` | Earlier executed Phase 1 checkpoint, retained for reference |
+| `data/README.md` | Download instructions; raw data are excluded |
+| `figures/` | Existing EDA figures; update from the final run |
+| `docs/RUBRIC_ALIGNMENT.md` | Evidence and remaining requirements, mapped to the handout |
+| `report/` | Existing IEEE draft and source; final PDF still required |
+| `slides/` | Presentation destination; final PDF still required |
+| `src/`, `scripts/`, `tests/` | Earlier setup utilities and checks; not required by the integrated notebook |
 
-## Repository layout
-
-```text
-requirements.txt       pinned direct dependencies
-notebooks/             single main notebook
-src/                   helper functions embedded in notebook
-scripts/               download/profile and notebook build utilities
-data/README.md         source instructions; raw/processed files ignored
-figures/               generated figures for report/slides
-docs/                  requirements, decisions, proposal, measured coverage
-report/                supplied IEEE draft PDF and LaTeX source
-slides/                final presentation destination
-```
-
-The existing report has five pages and pending experiments. Preserve it as a starting point; the final report must be 8–12 pages. Rename the notebook/repository to `Project4_Team##` when the team number is known. Both students must contribute real code commits and present.
-
-## Verified first checkpoint
-
-The notebook executed all 13 code cells without errors on Windows/Python 3.13.2, generated seven EDA plots, and retained all nine required sections. `pip check` and three baseline/coverage unit tests passed. See [validation notes](docs/VALIDATION.md).
-
-The source scan covered 8,599,212 city rows and 3,510 city/geography keys. The ten working cities include La Plata as a documented replacement for Buenos Aires, which is absent from this source. Global monthly data end in 2015; city data end in 2013; Australian rain data end in 2017. All four sources are now downloaded, including Meteostat station 78526 for 2000-2025. Later model phases are explicitly pending. See [student next steps](docs/TEAM_NEXT_STEPS.md) and [station selection](docs/STATION_SELECTION.md).
+**Submission status:** the team reports successful execution. The uploaded integrated notebook has no saved outputs. Structure and code syntax were checked; a new full model run was not performed for this repository update. The final results summary, several analytical requirements, IEEE report and slides remain outstanding; see the [rubric checklist](docs/RUBRIC_ALIGNMENT.md). Earlier planning documents describe historical checkpoints.
