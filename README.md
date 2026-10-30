@@ -1,7 +1,7 @@
 # Project 4 — Climate Analysis and Prediction
 
 **Team 4 · Introduction to Machine Learning with Python · UAGM Gurabo**  
-Miguel De Jesus Rosa and Elias (team to confirm full surname).
+Miguel De Jesus Rosa and Elias D. Medina Galan
 
 Historical warming and CO₂, one- and twelve-month city forecasts, climate clustering, and next-day rain/heat prediction.
 
