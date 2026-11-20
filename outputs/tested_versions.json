@@ -8,7 +8,5 @@
   "kagglehub": "1.0.3",
   "meteostat": "2.1.5",
   "rasterio": "1.5.2",
-  "requests": "2.34.2",
-  "joblib": "1.5.3",
-  "threadpoolctl": "3.6.0"
+  "statsmodels": "0.15.0"
 }

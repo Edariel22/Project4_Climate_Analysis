@@ -9,5 +9,15 @@ monthly forecast,Paris,MLP,302,2500,False
 monthly forecast,Sydney,MLP,433,2500,False
 monthly forecast,São Paulo,MLP,523,2500,False
 monthly forecast,Tokyo,MLP,194,2500,False
+twelve-month forecast,Bombay,MLP,612,2500,False
+twelve-month forecast,Cairo,MLP,578,2500,False
+twelve-month forecast,Cape Town,MLP,526,2500,False
+twelve-month forecast,La Plata,MLP,581,2500,False
+twelve-month forecast,London,MLP,252,2500,False
+twelve-month forecast,New York,MLP,327,2500,False
+twelve-month forecast,Paris,MLP,340,2500,False
+twelve-month forecast,Sydney,MLP,414,2500,False
+twelve-month forecast,São Paulo,MLP,518,2500,False
+twelve-month forecast,Tokyo,MLP,218,2500,False
 Australia rain,,MLP,50,1500,False
 Local heat,,MLP,29,1500,False

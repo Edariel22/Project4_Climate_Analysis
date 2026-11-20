@@ -1,6 +1,6 @@
 {
   "mean_cv_selected_city_MAE": 0.8546705392358621,
-  "twelve_month_mean_city_MAE_skill": 0.21288012693322078,
+  "twelve_month_mean_city_MAE_skill": 0.21041529928694028,
   "rain_model": "SVM",
   "rain_F1": 0.6404944167427488,
   "rain_AUC": 0.8691867334268856,
@@ -15,5 +15,26 @@
   "pca_explained_variance": 0.9659112085583964,
   "warming_pre1975": 0.035998397337429565,
   "warming_post1975": 0.16417044134727082,
-  "selected_mlp_limit_hits": 0
+  "selected_mlp_limit_hits": 0,
+  "twelve_month_cv_selected_MAE": 0.9222561349668513,
+  "twelve_month_best_models": {
+    "Bombay": "Lasso",
+    "Cairo": "Ridge",
+    "Cape Town": "Lasso",
+    "La Plata": "Lasso",
+    "London": "Ridge",
+    "New York": "Lasso",
+    "Paris": "Lasso",
+    "Sydney": "Lasso",
+    "S\u00e3o Paulo": "Lasso",
+    "Tokyo": "Linear"
+  },
+  "largest_absolute_lead_MAE_increase_family": "SVR",
+  "hac_slope_break": {
+    "slope_difference_C_per_decade": 0.12817204400984122,
+    "ci_low": 0.10465470984704565,
+    "ci_high": 0.1516893781726368,
+    "p_value": 1.0174587359711787e-20,
+    "method": "separate intercepts and slopes at 1975; HAC maxlags=5; descriptive observational comparison"
+  }
 }

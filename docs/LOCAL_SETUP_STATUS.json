@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "python": "3.13.18",
+  "python_executable": "anaconda3/envs/climate-team4/python.exe (user-local installation)",
+  "versions": {
+    "numpy": "2.3.5",
+    "pandas": "3.1.0",
+    "scipy": "1.17.0",
+    "scikit-learn": "1.8.0",
+    "matplotlib": "3.10.8",
+    "seaborn": "0.13.2",
+    "statsmodels": "0.15.0",
+    "rasterio": "1.5.2",
+    "meteostat": "2.1.5",
+    "kagglehub": "1.0.3",
+    "nbformat": "5.11.1",
+    "nbclient": "0.11.0",
+    "ipykernel": "7.4.0",
+    "jupyterlab": "4.4.10"
+  },
+  "kernel_smoke_test": "passed",
+  "notebook_schema": "valid",
+  "saved_comparison_rows": 245,
+  "full_project_retrained": false,
+  "setup_date_local": "2026-11-19",
+  "branch": "codex/project4-setup",
+  "analytical_cells_unchanged_from_received_package": true,
+  "changes": "Imported final package, local kernel metadata, launchers, environment and workflow documentation.",
+  "cloud_execution": "Personal editable copy saved and connected to a Python 3 Google Compute Engine runtime; full analysis not rerun.",
+  "notebook_sha256": "7386ed97af218ad906a61c03f833d8e8fda7fe10c888ac8222a3b6c624d29c04",
+  "local_browser_verified": "Chrome opened final notebook with Python (Climate Team 4) kernel."
+}

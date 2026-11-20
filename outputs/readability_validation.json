@@ -1,0 +1,18 @@
+{
+  "markdown_cells_rewritten": 39,
+  "code_cells_reformatted": 26,
+  "python_script_count": 6,
+  "code_syntax_trees_unchanged": true,
+  "saved_outputs_unchanged": true,
+  "notebook_sha256": "374b668cfc0b1d4b971671868686e62870887e0f8887e716606ea89aa6100ed7",
+  "model_run_repeated": false,
+  "previous_notebook_sha256": "02871d54a17f98791ccc1388486fc969833abc622e4ce1c961a91fa60986f2df",
+  "nine_sections_verified": true,
+  "github_published": false,
+  "github_write_error": "403: Resource not accessible by integration",
+  "colab_checked": "GitHub-backed ProjectX_Team4.ipynb displays older 155-row result, Ridge-only twelve-month model comparison",
+  "notebook_schema_valid": true,
+  "shared_drive_colab_status": "Updated in place and verified by downloading: exact byte match with validated revised notebook",
+  "drive_file_id": "1RuUMDKWYnloyxGTN7VvgyQ9vIT4PtUXs",
+  "drive_updated_at": "2026-10-30T19:37:01.055Z"
+}

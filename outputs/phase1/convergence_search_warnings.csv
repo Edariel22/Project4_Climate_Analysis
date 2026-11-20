@@ -99,6 +99,106 @@ monthly forecast,Tokyo,Random forest,0
 monthly forecast,Tokyo,Gradient boosting,0
 monthly forecast,Tokyo,SVR,0
 monthly forecast,Tokyo,MLP,0
+twelve-month forecast,Bombay,Linear,0
+twelve-month forecast,Bombay,Ridge,0
+twelve-month forecast,Bombay,Lasso,0
+twelve-month forecast,Bombay,Polynomial,0
+twelve-month forecast,Bombay,kNN,0
+twelve-month forecast,Bombay,Decision tree,0
+twelve-month forecast,Bombay,Random forest,0
+twelve-month forecast,Bombay,Gradient boosting,0
+twelve-month forecast,Bombay,SVR,0
+twelve-month forecast,Bombay,MLP,0
+twelve-month forecast,Cairo,Linear,0
+twelve-month forecast,Cairo,Ridge,0
+twelve-month forecast,Cairo,Lasso,0
+twelve-month forecast,Cairo,Polynomial,0
+twelve-month forecast,Cairo,kNN,0
+twelve-month forecast,Cairo,Decision tree,0
+twelve-month forecast,Cairo,Random forest,0
+twelve-month forecast,Cairo,Gradient boosting,0
+twelve-month forecast,Cairo,SVR,0
+twelve-month forecast,Cairo,MLP,0
+twelve-month forecast,Cape Town,Linear,0
+twelve-month forecast,Cape Town,Ridge,0
+twelve-month forecast,Cape Town,Lasso,0
+twelve-month forecast,Cape Town,Polynomial,0
+twelve-month forecast,Cape Town,kNN,0
+twelve-month forecast,Cape Town,Decision tree,0
+twelve-month forecast,Cape Town,Random forest,0
+twelve-month forecast,Cape Town,Gradient boosting,0
+twelve-month forecast,Cape Town,SVR,0
+twelve-month forecast,Cape Town,MLP,0
+twelve-month forecast,La Plata,Linear,0
+twelve-month forecast,La Plata,Ridge,0
+twelve-month forecast,La Plata,Lasso,0
+twelve-month forecast,La Plata,Polynomial,0
+twelve-month forecast,La Plata,kNN,0
+twelve-month forecast,La Plata,Decision tree,0
+twelve-month forecast,La Plata,Random forest,0
+twelve-month forecast,La Plata,Gradient boosting,0
+twelve-month forecast,La Plata,SVR,0
+twelve-month forecast,La Plata,MLP,0
+twelve-month forecast,London,Linear,0
+twelve-month forecast,London,Ridge,0
+twelve-month forecast,London,Lasso,0
+twelve-month forecast,London,Polynomial,0
+twelve-month forecast,London,kNN,0
+twelve-month forecast,London,Decision tree,0
+twelve-month forecast,London,Random forest,0
+twelve-month forecast,London,Gradient boosting,0
+twelve-month forecast,London,SVR,0
+twelve-month forecast,London,MLP,0
+twelve-month forecast,New York,Linear,0
+twelve-month forecast,New York,Ridge,0
+twelve-month forecast,New York,Lasso,0
+twelve-month forecast,New York,Polynomial,0
+twelve-month forecast,New York,kNN,0
+twelve-month forecast,New York,Decision tree,0
+twelve-month forecast,New York,Random forest,0
+twelve-month forecast,New York,Gradient boosting,0
+twelve-month forecast,New York,SVR,0
+twelve-month forecast,New York,MLP,0
+twelve-month forecast,Paris,Linear,0
+twelve-month forecast,Paris,Ridge,0
+twelve-month forecast,Paris,Lasso,0
+twelve-month forecast,Paris,Polynomial,0
+twelve-month forecast,Paris,kNN,0
+twelve-month forecast,Paris,Decision tree,0
+twelve-month forecast,Paris,Random forest,0
+twelve-month forecast,Paris,Gradient boosting,0
+twelve-month forecast,Paris,SVR,0
+twelve-month forecast,Paris,MLP,0
+twelve-month forecast,Sydney,Linear,0
+twelve-month forecast,Sydney,Ridge,0
+twelve-month forecast,Sydney,Lasso,0
+twelve-month forecast,Sydney,Polynomial,0
+twelve-month forecast,Sydney,kNN,0
+twelve-month forecast,Sydney,Decision tree,0
+twelve-month forecast,Sydney,Random forest,0
+twelve-month forecast,Sydney,Gradient boosting,0
+twelve-month forecast,Sydney,SVR,0
+twelve-month forecast,Sydney,MLP,0
+twelve-month forecast,São Paulo,Linear,0
+twelve-month forecast,São Paulo,Ridge,0
+twelve-month forecast,São Paulo,Lasso,0
+twelve-month forecast,São Paulo,Polynomial,0
+twelve-month forecast,São Paulo,kNN,0
+twelve-month forecast,São Paulo,Decision tree,0
+twelve-month forecast,São Paulo,Random forest,0
+twelve-month forecast,São Paulo,Gradient boosting,0
+twelve-month forecast,São Paulo,SVR,0
+twelve-month forecast,São Paulo,MLP,0
+twelve-month forecast,Tokyo,Linear,0
+twelve-month forecast,Tokyo,Ridge,0
+twelve-month forecast,Tokyo,Lasso,0
+twelve-month forecast,Tokyo,Polynomial,0
+twelve-month forecast,Tokyo,kNN,0
+twelve-month forecast,Tokyo,Decision tree,0
+twelve-month forecast,Tokyo,Random forest,0
+twelve-month forecast,Tokyo,Gradient boosting,0
+twelve-month forecast,Tokyo,SVR,0
+twelve-month forecast,Tokyo,MLP,0
 Australia rain,,Logistic,0
 Australia rain,,kNN,0
 Australia rain,,Naive Bayes,0

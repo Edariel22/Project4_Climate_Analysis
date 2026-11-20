@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "notebook_code_cells": 27,
+  "notebook_sections": 9,
+  "saved_errors": 0,
+  "master_rows": 245,
+  "regressor_families_per_lead": 10,
+  "forecast_cities": 10,
+  "event_classifiers_per_task": 8,
+  "koppen_cities": 20,
+  "convergence_warnings": 0,
+  "selected_mlp_limit_hits": 0,
+  "source_hashes_verified": 9,
+  "abstract_whitespace_words": 167,
+  "report_pages": 12,
+  "presentation_slides": 12,
+  "notebook_sha256": "02871d54a17f98791ccc1388486fc969833abc622e4ce1c961a91fa60986f2df",
+  "execution_scope": "new in-process IPython namespace; user to verify on Google-hosted Colab",
+  "team_details": "Elias D Medina Galan is confirmed as a team member; precise individual contribution allocation still requires team confirmation"
+}

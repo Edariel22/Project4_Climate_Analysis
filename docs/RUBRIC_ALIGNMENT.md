@@ -1,8 +1,8 @@
-# Team 4 — notebook alignment
+# Where the requirements are covered
 
-Source: `Project4_Climate_Analysis.pdf`, D1 and sections 5–11. The final execution evidence and measured counts are in `outputs/run_summary.json` and `docs/VALIDATION.md`.
+This table connects the professor's requirements to the notebook and supporting files. The assignment is `Project4_Climate_Analysis.pdf`. Run counts are saved in `outputs/run_summary.json`; the scope of the checks is explained in `docs/VALIDATION.md`.
 
-| Requirement | Implementation / evidence |
+| Requirement | Where to find it |
 |---|---|
 | Nine sections in prescribed order | Main notebook: title, setup, EDA, splits, unsupervised, supervised, comparison, interpretation, conclusions |
 | Actual results summary | Measured title paragraph, Section 9 and `outputs/report_facts.json` |
@@ -10,7 +10,7 @@ Source: `Project4_Climate_Analysis.pdf`, D1 and sections 5–11. The final execu
 | Training-fold preprocessing | sklearn Pipelines; calendar-grouped rain/heat CV with date gaps; chronological city CV |
 | All required model families | Ten regressors for each city; eight classifiers for each event task; model-specific subsections |
 | Warming and CO₂ | Three descriptive slopes with intervals; held-out linear/polynomial/Ridge/Lasso results |
-| Twelve-month forecast question | Separate purged Ridge/seasonal-naive experiment for all ten cities; not mislabelled as the full ten-model comparison |
+| Twelve-month forecast question | All ten regression families plus seasonal naive for all ten cities, with purged CV, explicit origin dates and matching test months |
 | PCA, K-Means and Köppen | 20 profiles, PCA loadings, elbow/silhouette, Natural Earth world map, independently sourced raster classes and ARI |
 | Required metrics and comparison | Single task-labelled master CSV; CV mean/SD, held-out metrics, search/prediction timings and baseline skill; descriptive clustering rows labelled separately |
 | Event metrics | Precision, recall, F1, ROC-AUC, ROC curves, both confusion matrices and rain per-location accuracy |
@@ -19,14 +19,14 @@ Source: `Project4_Climate_Analysis.pdf`, D1 and sections 5–11. The final execu
 | MLP warnings | Larger iteration budgets; all search warnings and selected-model iteration-limit status exported |
 | Reproducibility | Saved outputs, exact analysis dependency pins, seed 42, explicit sampling and source/provenance limitations |
 
-## Remaining submission work
+## Deliverables
 
-- Confirm Elias's full surname and both students' preferred author names.
-- Write the IEEE report: 8–12 pages, 150–200-word abstract, ≥4 related works, methods/results/discussion, references and truthful contribution statement.
-- Prepare 10–12 slides as PDF, prediction demo and the shared 12-minute presentation plus Q&A.
-- Both students must review code/results, contribute code and appear in history; confirm instructor access and follow course AI policy.
-- Independently test fresh Colab acquisition if required; this validation reuses cached source files and executes in an IPython process.
+- Final notebook: `notebooks/Project4_Team4.ipynb`, all nine sections and saved measured outputs.
+- IEEE report: `report/Project4_Team4_IEEE_Report.pdf`, with LaTeX source, related work, numbered figures/tables and the four discussion answers.
+- Presentation: 12-slide PDF and editable PPTX in `slides/`, with suggested 12-minute speaker timing and a recorded prediction example.
+- Final measured validation: `outputs/final_validation.json`. Independent Google-hosted Colab execution remains the user's requested review.
+- Confirm the truthful contribution allocation; rehearse and verify instructor access.
 
-## Interpretation constraints
+## How to read the results
 
-Low Köppen ARI is a result, not a failed execution. Heat F1/recall limitations and false alerts must remain visible. Warming intervals assume ordinary regression errors; they are not autocorrelation-adjusted. The handout's full-record heat definition is retrospective and is not an operational past-only threshold. San Juan station results are regional evidence, not exact campus conditions. Meteostat's aggregate provider does not guarantee every value is directly observed. Unsupervised diagnostics and predictive scores are not interchangeable.
+The weak Köppen agreement and the event models' errors are findings to discuss. Warming intervals include ordinary and five-lag HAC results. The heat label uses the full record because the assignment requires it; a live system would need a past-only threshold. San Juan station results describe the regional record rather than exact campus conditions. Meteostat combines sources, and a nonmissing value need not be a direct observation. Climate-grouping measures and prediction scores answer different questions.

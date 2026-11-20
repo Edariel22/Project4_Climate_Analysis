@@ -1,16 +1,24 @@
-# Corrected integrated notebook validation — 2026-10-30
+# What was checked
 
-- All 27 code cells executed sequentially in one new IPython process with cached source data. No error outputs occurred. A networked Jupyter kernel could not start in this execution environment, so an in-process IPython executor was used; this is not a verified fresh Google-hosted Colab download run.
-- Nine main sections are in the exact D1 order; all model families have explicit subsections. Saved outputs include figures, tables, explanations, feature importance, error analysis and measured conclusions.
-- Ten cities × (ten regressors + baseline) = 110 monthly comparison rows; twelve-month Ridge/baseline = 20 rows; eight classifiers for each event task; seven predictive global specifications and two descriptive climate diagnostic rows. The combined CSV has 155 rows.
-- Full-record heat threshold = 32.2°C. It happens to equal this source snapshot's training-period percentile, so the definition correction does not change these labels. Annual count and observed-day rate trends retain years with ≥90% tmax coverage.
-- All 20 Köppen profiles match sourced classes; world-map baselayer, elbow/silhouette and PCA loadings are present. ARI 0.0596 is weak agreement, not a model-execution failure.
-- Increased MLP iteration budgets; zero convergence warnings were recorded across the searches and zero selected MLP fits reached their iteration limits. Exact iteration counts are exported.
-- CV determines reporting models. Calendar-grouped rain/heat CV prevents a date crossing a fold boundary. All predictive transformations are within Pipelines. The required full-record heat label is explicitly retrospective.
-- Map, permutation-importance and residual figures were visually reviewed. Dataset snapshots are hashed in outputs/source_manifest.json; exact analysis versions are recorded and pinned.
-- The title summary, final conclusions and report_facts.json use actual executed metrics. Global test R² values are negative and are explicitly discussed; no predictive success is inferred from in-sample fits.
-- Source records are provider products; Meteostat DAILY does not establish observation-only provenance. San Juan International is regional, not a campus instrument.
+The final notebook is `notebooks/Project4_Team4.ipynb`. Its saved analytical run completed all 27 code cells in a fresh in-process IPython session with no saved errors. A normal TCP Jupyter kernel could not start on that host, so this is not a claim that the notebook was run on Google's Colab runtime.
 
-## Remaining deliverables
+## Model and data checks
 
-Confirm both author names (Elias's surname is still missing), write the IEEE report and contribution statement, prepare slides/demo, verify instructor access, and rehearse. The notebook is ready to serve as the analytical basis for the report, subject to those identity and submission checks. Prepared with Codex assistance.
+- Ten cities were tested with ten regressors and a seasonal baseline at both one- and twelve-month leads: 220 forecast rows in total.
+- Seven global prediction rows, sixteen event-classifier rows, and two climate-summary rows bring the master table to 245 rows.
+- Twelve-month temperature inputs stop at the forecast origin. Date checks prevent training labels from extending beyond the first validation origin. Forecast issue and target dates are saved.
+- One- and twelve-month errors use the same target months for each city.
+- Rain and heat models use date-ordered validation. All locations from the same date stay on one side of each rain split. Rain subsampling affects training only.
+- The heat label uses the full-record percentile required by the assignment. It happens to equal the training-only percentile in this saved dataset.
+- The global trends include ordinary and five-lag Newey–West HAC intervals. The comparison at 1975 allows separate intercepts and slopes.
+- Package versions, source hashes, settings, predictions, plots, and convergence checks are saved with the results.
+
+## Readability edit
+
+The explanations were rewritten in plain English. Compressed Python statements were expanded and comments were added. Each reformatted cell and helper script was checked against its earlier Python syntax tree. The calculations, settings, execution counts, and saved outputs were preserved. This edit did not repeat the model training.
+
+`outputs/final_validation.json` records the earlier analysis and document checks. `outputs/readability_validation.json` records the later text and formatting checks. Keeping these separate makes it clear what was run and what was edited afterward.
+
+## Team review still needed
+
+Run the final notebook in Colab, check the individual contribution statement, review the report and slides, rehearse the talk, and confirm that the professor can open the repository. Submission and presentation are still team actions.

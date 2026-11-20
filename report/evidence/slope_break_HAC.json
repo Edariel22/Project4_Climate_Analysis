@@ -1,0 +1,7 @@
+{
+  "slope_difference_C_per_decade": 0.12817204400984122,
+  "ci_low": 0.10465470984704565,
+  "ci_high": 0.1516893781726368,
+  "p_value": 1.0174587359711787e-20,
+  "method": "separate intercepts and slopes at 1975; HAC maxlags=5; descriptive observational comparison"
+}

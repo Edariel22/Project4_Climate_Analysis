@@ -14,3 +14,10 @@ report/*.aux
 report/*.log
 report/*.out
 report/*.synctex.gz
+
+# Generated local bundles and compilation intermediates
+Team4_Climate_Results.zip
+report/main.pdf
+
+# Personal local entry points (not team deliverables)
+Open_Personal_Colab.url
