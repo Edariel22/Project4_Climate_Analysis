@@ -1,12 +1,15 @@
-# Week 1 proposal — working draft, not yet submitted
+# Week 1 proposal draft
 
 **Project:** Machine Learning in Climate Analysis and Prediction
-**Students / team:** awaiting full names and team number
-**Accounts:** Edariel22 and pologram1
-**Campus / local station:** UAGM Gurabo; Meteostat 78526 (San Juan International Airport), about 21.3 km away. Period 2000-2025; 25 years with >=90% valid daily maximum temperatures. See STATION_SELECTION.md for limitations.
+**Team 4:** Miguel De Jesus Rosa and Elias D Medina Galan
+**Campus:** UAGM Gurabo
 
-We will estimate global warming per decade and compare trends before and after 1975; evaluate 12-month city-temperature forecasts against a seasonal-naive baseline; discover city climate groups with PCA and k-Means; and predict next-day rain and local heat events while measuring local heat-frequency trends. We will use Berkeley Earth monthly temperatures, NOAA Mauna Loa CO2, Rain in Australia, and one nearby Meteostat station.
+We plan to study long-term warming, forecast monthly temperatures in ten cities, group cities with similar climates, and predict next-day rain and heat. The main sources are Berkeley Earth temperatures, NOAA Mauna Loa CO₂, Rain in Australia, and daily Meteostat station weather.
 
-The ten working cities are New York, London, Paris, Cairo, Mumbai (historical dataset label Bombay), Tokyo, Sydney, Cape Town, Sao Paulo and La Plata. La Plata replaces the report's suggested Buenos Aires, which is absent from this CSV. Forecasts train through 2000 and test on available observations in 2001-2013; Australian rain models train through 2015 and test from 2016. Preprocessing stays inside cross-validation Pipelines. The shared notebook records download provenance, missingness and chronological partitions.
+Our forecasting cities are New York, London, Paris, Cairo, Mumbai (Bombay in the dataset), Tokyo, Sydney, Cape Town, São Paulo, and La Plata. La Plata replaces Buenos Aires because the latter is absent from the city file.
 
-**Before submission:** insert confirmed names/team and review the selected station, review `docs/data_coverage.csv` and city coverage, and capture notebook outputs showing `df.shape` and `df.head()` for all four sources. Export the finished proposal to one page. This draft is not a completed Week 1 submission.
+For the local task, we selected San Juan International station 78526, about 21.3 km from campus. Its 2000–2025 record has 25 years with at least 90% valid daily maximum temperatures. It provides a regional coastal reference rather than campus measurements; see `STATION_SELECTION.md`.
+
+We will keep the dates in order when training and testing models. City testing covers available 2001–2013 observations, and rain testing begins in 2016. We will compare city forecasts with the temperature from the same month of the previous year and report both useful results and limitations.
+
+This file preserves the proposal stage of the project. The final analysis is in the main notebook. Proposal submission has not been confirmed. Before using this as a Week 1 submission, add the required data-shape and first-row screenshots and check the one-page format.

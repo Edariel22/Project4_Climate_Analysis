@@ -1,0 +1,10 @@
+{
+  "station": "78526",
+  "name": "San Juan / International",
+  "ICAO": "TJSJ",
+  "latitude": 18.4333,
+  "longitude": -66.0,
+  "source": "https://meteostat.net/en/station/78526",
+  "interpretation": "Regional coastal airport reference, not a campus measurement",
+  "provider": "Meteostat Provider.DAILY aggregated product; observation-only provenance is not guaranteed"
+}

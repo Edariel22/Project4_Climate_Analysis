@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "executor": "new in-process IPython namespace; TCP Jupyter kernel unavailable in host",
+  "elapsed_seconds": 555.4055874347687,
+  "code_cells": 27,
+  "error_outputs": 0,
+  "acquisition": "source downloads requested from this workspace; provider caches may be reused"
+}

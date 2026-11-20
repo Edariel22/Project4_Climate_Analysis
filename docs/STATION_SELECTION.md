@@ -13,7 +13,7 @@ Meteostat's nearby-station query (50 km radius, limit 20) returned two stations.
 | 78526 — San Juan International | 21.3 km | 2000-2025 | 9,278 of 9,497 calendar days (97.7%) | 25 |
 | TJIG0 — San Juan / Puerta de Tierra | 25.7 km | 2000-2025 | 1,804 of 9,497 calendar days | 5 |
 
-Select 78526 because it is the closer catalog result and provides more than the assignment's required 20 years. Its coordinates are 18.4333, -66.0000; elevation 3 m; timezone America/Puerto_Rico. Metadata: https://meteostat.net/en/station/78526.
+We selected 78526 because it is the closer catalog result and provides more than the required 20 years. Its coordinates are 18.4333, -66.0000; elevation 3 m; timezone America/Puerto_Rico. Metadata: https://meteostat.net/en/station/78526.
 
 ## Coverage and limitations
 
@@ -28,4 +28,4 @@ Select 78526 because it is the closer catalog result and provides more than the 
 
 Run `python scripts/audit_station.py` to reproduce the candidate comparison and calendar-based completeness tables. Run `python scripts/prepare_data.py` to acquire the selected station along with the other sources. Raw daily files remain in ignored `data/raw/`; the repository contains only code, metadata and aggregate diagnostics.
 
-The original assignment places station choice in the proposal (page 2) and requires >=20 years of daily data for Phase 5 (page 3). Heat is defined by maximum temperature above the 90th percentile of the full selected record; modeling remains pending.
+The original assignment places station choice in the proposal (page 2) and requires >=20 years of daily data for Phase 5 (page 3). Heat is defined by maximum temperature above the 90th percentile of the full selected record; all eight classifiers and the annual count/rate trends are now evaluated in the final notebook.

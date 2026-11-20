@@ -1,5 +1,7 @@
-# Report
+# IEEE report
 
-`draft_received.pdf` and `main.tex` preserve the user-supplied draft and LaTeX source. The original PDF has five pages and contains pending experiments. It is not the final 8-12-page report.
+`Project4_Team4_IEEE_Report.pdf` is the twelve-page report. It explains the data, models, results, and limitations, with figures and references. `main.tex` is its editable IEEE source.
 
-See ../docs/DECISIONS.md for alignment issues. Once results are available, insert real measurements, complete authors/citations/contributions, align the global-series terminology and repository privacy wording, compile the IEEE source and visually inspect every page. Final PDF belongs here.
+The numbers come from the saved notebook outputs. `evidence/` contains the detailed tables behind the report's compact tables. The individual contribution table still needs both students to confirm their actual tasks.
+
+To rebuild the report, run `python scripts/build_report.py` from the project root, then compile `report/main.tex` twice with pdfLaTeX. The script uses the saved results and preserved manuscript template. `draft_received.pdf` is the original draft, kept for reference.

@@ -2,6 +2,7 @@
 
 Use --force only when intentionally regenerating from these sources.
 """
+
 import argparse
 from pathlib import Path
 import nbformat as nbf
@@ -15,10 +16,15 @@ if target.exists() and not args.force:
     raise SystemExit("Notebook exists. Preserve edits, or explicitly pass --force.")
 
 cells = []
+
+
 def md(text):
     cells.append(nbf.v4.new_markdown_cell(text))
+
+
 def code(text):
     cells.append(nbf.v4.new_code_cell(text))
+
 
 md("""# 1. Title, team members and summary
 ## Project 4: Machine Learning in Climate Analysis and Prediction
@@ -38,17 +44,21 @@ md("""# 2. Imports, configuration and data loading
 Sources: [Berkeley Earth/Kaggle](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data), [NOAA GML](https://gml.noaa.gov/ccgg/trends/data.html), [Rain in Australia](https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package), [Meteostat](https://dev.meteostat.net/python/). Preserve source attribution and verify licenses before redistribution.
 """)
 reqs = (root / "requirements.txt").read_text().splitlines()
-code("""import sys, subprocess, importlib.util
+code(
+    """import sys, subprocess, importlib.util
 from pathlib import Path
 IN_COLAB = importlib.util.find_spec('google') is not None and importlib.util.find_spec('google.colab') is not None
-""" + f"PINNED_PACKAGES = {reqs!r}\n" + """if IN_COLAB:
+"""
+    + f"PINNED_PACKAGES = {reqs!r}\n"
+    + """if IN_COLAB:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-q', *PINNED_PACKAGES])
 print('Python:', sys.version)
 ROOT = Path('/content/project4') if IN_COLAB else (Path.cwd().parent if Path.cwd().name == 'notebooks' else Path.cwd())
 for folder in ['data/raw', 'data/processed', 'figures', 'docs']:
     (ROOT / folder).mkdir(parents=True, exist_ok=True)
 print('Working directory:', ROOT)
-""")
+"""
+)
 code((root / "src/project_setup.py").read_text(encoding="utf-8"))
 code("""import matplotlib.pyplot as plt
 import seaborn as sns
@@ -90,7 +100,8 @@ Station **78526 / TJSJ**, San Juan International Airport, is approximately **21.
 
 This coastal station is a regional reference, not an on-campus instrument. Data use Meteostat's aggregated `Provider.DAILY` product, which is not certified observation-only. No application-level interpolation was used. See [selection and provenance notes](https://github.com/Edariel22/Project4_Climate_Analysis/blob/main/docs/STATION_SELECTION.md).
 """)
-code("""station_calendar = station.set_index('time').sort_index().reindex(pd.date_range(STATION_START, STATION_END, freq='D'))
+code(
+    """station_calendar = station.set_index('time').sort_index().reindex(pd.date_range(STATION_START, STATION_END, freq='D'))
 station_calendar.index.name = 'time'
 valid_tmax = station_calendar.tmax.notna()
 station_annual_coverage = pd.DataFrame({'valid_tmax': valid_tmax.resample('YS').sum(), 'expected_days': valid_tmax.resample('YS').size()})
@@ -101,7 +112,8 @@ display(station_annual_coverage)
 display(station_calendar.isna().mean().to_frame('missing_fraction_calendar'))
 station_annual_coverage.to_csv(ROOT / 'docs/station_coverage_78526.csv', index_label='year_start')
 display(Markdown('**Quality note:** 2009 has only 66.3% maximum-temperature coverage. Later heat-trend analysis must flag low-coverage years and report observed-day rates alongside counts. The 90% annual completeness threshold is our quality-control choice.'))
-""")
+"""
+)
 md("""# 3. Exploratory data analysis
 
 Phase 1: at least six figures, each followed by an interpretation. This checkpoint uses actual observed data only. Local heat-frequency analysis will be added in Phase 5; station coverage is checked below. Early temperature estimates and uncertainty columns must be discussed; no gaps are silently interpolated.
@@ -142,12 +154,14 @@ save_figure('04_monthly_cycles')
 peaks = ', '.join(f'{city}: month {int(cycles[city].idxmax())}' for city in cycles)
 display(Markdown(f'**Interpretation:** Peak climatological temperatures occur in {peaks}. Comparing Northern and Southern Hemisphere cities reveals the seasonal timing difference.'))
 """)
-code("""rain_frequency = rain.assign(rain_label=rain.RainTomorrow.map({'Yes': 1.0, 'No': 0.0})).groupby('Location').rain_label.mean().sort_values()
+code(
+    """rain_frequency = rain.assign(rain_label=rain.RainTomorrow.map({'Yes': 1.0, 'No': 0.0})).groupby('Location').rain_label.mean().sort_values()
 ax = rain_frequency.plot.bar(figsize=(14, 5), color='#287b8e')
 ax.set(title='Next-day rain frequency by Australian location', xlabel='Location', ylabel='Fraction of observed labels with rain')
 save_figure('05_rain_frequency')
 display(Markdown(f'**Interpretation:** Observed rain-label prevalence ranges from {rain_frequency.min():.1%} to {rain_frequency.max():.1%} across locations; missing target labels are excluded from the denominator. This variation motivates reporting per-location test accuracy as well as class-sensitive metrics.'))
-""")
+"""
+)
 code("""missing = rain.isna().mean().sort_values(ascending=False)
 ax = missing.plot.bar(color='#be7946', figsize=(12, 4))
 ax.set(title='Rain in Australia: missing fraction by field', xlabel='Field', ylabel='Missing fraction')
@@ -195,21 +209,54 @@ md("""# 6. Supervised models
 **Phases 2, 3 and 5 pending.** Each subsection below must contain its Pipeline, tuning search, temporal CV mean/SD, best parameters, fit/predict times and final held-out metrics. No model is marked trained by merely listing it. Compare all models on the same eligible rows and horizons.
 """)
 models = [
-('Linear regression', 'Global annual trend and each city forecast; slope per decade with an autocorrelation-aware 95% CI.'),
-('Ridge', 'City forecasts and annual global models with/without CO₂; tune alpha.'),
-('Lasso', 'City forecasts and annual global models with/without CO₂; tune alpha and monitor convergence.'),
-('Polynomial regression', 'Degree 2 and 3 global trends; city forecasts with PolynomialFeatures inside the Pipeline.'),
-('Logistic regression', 'Rain and local heat classifiers; tune regularization and address imbalance.'),
-('k-Nearest Neighbors', 'Regressor for every city; classifiers for rain and heat; tune neighbors and weights after fold-fitted scaling.'),
-('Naive Bayes', 'Rain and heat classifiers; select an appropriate distribution and tune smoothing.'),
-('Support Vector Machine', 'SVR city forecasts; SVC rain and heat; tune C, kernel and relevant scale parameters.'),
-('Decision tree', 'Regression and both classification tasks; tune depth and minimum leaf size.'),
-('Random forest', 'Regression and both classification tasks; tune tree count, depth and leaf size; seed 42.'),
-('Gradient boosting', 'Regression and both classification tasks; tune learning rate, stages and tree complexity.'),
-('Multilayer perceptron', 'MLPRegressor and MLPClassifier; tune architecture, regularization and learning rate; record convergence.'),
+    (
+        "Linear regression",
+        "Global annual trend and each city forecast; slope per decade with an autocorrelation-aware 95% CI.",
+    ),
+    ("Ridge", "City forecasts and annual global models with/without CO₂; tune alpha."),
+    (
+        "Lasso",
+        "City forecasts and annual global models with/without CO₂; tune alpha and monitor convergence.",
+    ),
+    (
+        "Polynomial regression",
+        "Degree 2 and 3 global trends; city forecasts with PolynomialFeatures inside the Pipeline.",
+    ),
+    (
+        "Logistic regression",
+        "Rain and local heat classifiers; tune regularization and address imbalance.",
+    ),
+    (
+        "k-Nearest Neighbors",
+        "Regressor for every city; classifiers for rain and heat; tune neighbors and weights after fold-fitted scaling.",
+    ),
+    (
+        "Naive Bayes",
+        "Rain and heat classifiers; select an appropriate distribution and tune smoothing.",
+    ),
+    (
+        "Support Vector Machine",
+        "SVR city forecasts; SVC rain and heat; tune C, kernel and relevant scale parameters.",
+    ),
+    (
+        "Decision tree",
+        "Regression and both classification tasks; tune depth and minimum leaf size.",
+    ),
+    (
+        "Random forest",
+        "Regression and both classification tasks; tune tree count, depth and leaf size; seed 42.",
+    ),
+    (
+        "Gradient boosting",
+        "Regression and both classification tasks; tune learning rate, stages and tree complexity.",
+    ),
+    (
+        "Multilayer perceptron",
+        "MLPRegressor and MLPClassifier; tune architecture, regularization and learning rate; record convergence.",
+    ),
 ]
 for name, task in models:
-    md(f'## {name}\n\n**Not trained yet.** {task}')
+    md(f"## {name}\n\n**Not trained yet.** {task}")
 md("""## Baselines and local frequency trend
 
 Seasonal naive predicts the same month last year. For a forecast issued at t with target t+12, its prediction is the observed T(t). Use a majority-class baseline for event classification as context. Count local heat days by year, include valid observation counts/rates, and fit a linear trend with uncertainty. These analyses remain pending.
@@ -218,11 +265,13 @@ md("""# 7. Model comparison table and plots
 
 **Pending measured experiments.** A master table must identify task, city/station, horizon, model, best hyperparameters, CV mean/SD, held-out metrics, training time and prediction time. Regression needs RMSE/MAE/R² and seasonal-naive skill; classification needs precision/recall/F1/ROC-AUC/confusion matrices and Australian per-location accuracy. Add forecast-vs-actual plots for three cities, ROC curves and a climate-zone world map. Empty cells below are intentional, not zero scores.
 """)
-code("""comparison = pd.DataFrame(columns=['task', 'location', 'horizon', 'model', 'best_hyperparameters',
+code(
+    """comparison = pd.DataFrame(columns=['task', 'location', 'horizon', 'model', 'best_hyperparameters',
     'cv_metric', 'cv_mean', 'cv_std', 'test_rmse', 'test_mae', 'test_r2', 'seasonal_naive_skill',
     'test_precision', 'test_recall', 'test_f1', 'test_roc_auc', 'training_seconds', 'prediction_seconds'])
 display(comparison)
-""")
+"""
+)
 md("""# 8. Interpretation
 
 Complete after evaluation:
@@ -242,9 +291,11 @@ This checkpoint establishes data access and exploratory checks. Model performanc
 **Implementation references:** [KaggleHub](https://github.com/Kaggle/kagglehub), [Meteostat daily](https://dev.meteostat.net/python/api/meteostat.daily), [scikit-learn leakage guidance](https://scikit-learn.org/stable/common_pitfalls.html), and the supplied Project 4 assignment. Record AI assistance according to course policy and distinguish it from each student's contributions.
 """)
 nb = nbf.v4.new_notebook(cells=cells)
-nb.metadata.update(kernelspec={'display_name':'Python 3', 'language':'python', 'name':'python3'},
-                   language_info={'name':'python', 'version':'3.13.2'},
-                   colab={'name': target.name, 'provenance': []})
+nb.metadata.update(
+    kernelspec={"display_name": "Python 3", "language": "python", "name": "python3"},
+    language_info={"name": "python", "version": "3.13.2"},
+    colab={"name": target.name, "provenance": []},
+)
 nbf.validate(nb)
 nbf.write(nb, target)
 print(target)

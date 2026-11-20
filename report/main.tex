@@ -1,228 +1,407 @@
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
 \usepackage[T1]{fontenc}
-\usepackage{amsmath,amssymb,booktabs,multirow,array}
-\usepackage{graphicx}
-\usepackage{xcolor}
-\usepackage{url}
-\usepackage{hyperref}
-\usepackage{listings}
-\usepackage{enumitem}
-\usepackage{float}
-\usepackage{balance}
-\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
-\newcommand{\todo}[1]{\textcolor{blue!65!black}{\textbf{[TO COMPLETE: #1]}}}
-\newcommand{\placeholder}{\textbf{[PENDING EXPERIMENT]}}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,booktabs,array,graphicx,url}
+\usepackage[hidelinks,hypertexnames=false]{hyperref}
+\usepackage{enumitem,placeins,stfloats,float}
+\graphicspath{{figures/}}
+\setcounter{topnumber}{4}
+\setcounter{dbltopnumber}{4}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\textfraction}{0.05}
+\hypersetup{pdftitle={Project 4 Team 4 - Climate Analysis and Prediction},pdfauthor={Miguel A. De-Jesus-Rosa and Elias D Medina Galan}}
+\setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\newcommand{\figone}[3]{\begin{figure}[!tbp]\centering\includegraphics[width=\columnwidth]{#1}\caption{#2}\label{#3}\end{figure}}
+\newcommand{\figwide}[3]{\begin{figure*}[!tbp]\centering\includegraphics[width=.97\textwidth]{#1}\caption{#2}\label{#3}\end{figure*}}
 \title{Machine Learning in Climate Analysis and Prediction:\\Long-Term Trends, City Forecasts, Climate Zones, and Daily Weather Events}
-\author{\IEEEauthorblockN{Student 1 and Student 2}
-\IEEEauthorblockA{Department of \todo{Department}, \todo{University}\\
-\todo{City, Country}\\ \todo{student1@email.edu}, \todo{student2@email.edu}}}
+\author{\IEEEauthorblockN{Miguel A. De-Jesus-Rosa and Elias D Medina Galan}
+\IEEEauthorblockA{Computer Engineering Department\\Universidad Ana G. M\'endez, Gurabo Campus\\Gurabo, Puerto Rico\\mde472@email.uagm.edu}}
 \begin{document}
 \maketitle
 \begin{abstract}
-This study develops a reproducible machine-learning workflow for four complementary climate tasks: estimating long-term global temperature trends, forecasting city-level monthly temperature, identifying groups of cities with similar climate characteristics, and predicting next-day rain and extreme-heat events. Monthly land-temperature records from Berkeley Earth, atmospheric carbon dioxide measurements from NOAA Mauna Loa, Australian daily weather observations, and station data retrieved through Meteostat form the empirical basis of the analysis. Global anomalies are computed relative to 1951--1980; linear and polynomial trends are contrasted, including estimates before and after 1975. For ten geographically diverse cities, supervised regression algorithms are evaluated against a seasonal-naive baseline using time-ordered splits. Standardized monthly climatologies are analyzed with principal component analysis and k-means and compared qualitatively with K\"oppen climate zones. For rain and heat-day classification, several model families are benchmarked using held-out temporal test periods and class-sensitive metrics. \todo{After running the experiments, replace this sentence with 2--3 quantified findings, uncertainties, and one practical conclusion.} The study emphasizes leakage prevention, transparent evaluation, reproducibility, and the limits of observational climate data.
+This study evaluates machine-learning methods for long-term temperature trends, city temperature forecasting, climate-zone discovery, and next-day rain and heat classification. Berkeley Earth temperature records, NOAA Mauna Loa carbon dioxide measurements, Australian weather observations, and Meteostat station data support five analysis phases. Chronological holdouts and training-fold preprocessing separate model development from evaluation. The global land-and-ocean series exhibits descriptive warming of 0.0360~$^\circ$C per decade during 1850--1974 and 0.1642~$^\circ$C per decade during 1975--2015, with autocorrelation-aware uncertainty reported alongside ordinary intervals. Across ten cities, cross-validation-selected one-month models average 0.855~$^\circ$C test mean absolute error. All ten families are also tested twelve months ahead, where validation-selected models achieve 0.922~$^\circ$C mean city MAE and 21.0\% mean baseline skill. Twenty-city clustering selects three groups but agrees weakly with detailed K\"oppen classes, with adjusted Rand index 0.0596. The selected rain support-vector machine achieves F1 0.640 and ROC-AUC 0.869; the heat random forest achieves F1 0.493 and ROC-AUC 0.878. These results demonstrate useful retrospective structure while exposing limitations in long-range extrapolation, climate-zone recovery, and reliable event warnings.
 \end{abstract}
-\begin{IEEEkeywords}
-climate change, machine learning, temperature forecasting, carbon dioxide, principal component analysis, k-means, weather classification
-\end{IEEEkeywords}
+\begin{IEEEkeywords}climate analysis, machine learning, temperature forecasting, chronological validation, PCA, k-means, weather classification\end{IEEEkeywords}
 
 \section{Introduction}
-Climate datasets record processes operating at multiple temporal and spatial scales. Long-term temperature changes are influenced by persistent forcing, whereas seasonal cycles and daily weather introduce considerable variability. Predictive methods can summarize these patterns, but performance must be assessed against straightforward baselines and with careful control of chronological leakage.
+Climate records combine long-term change, repeatable seasonal behavior, and short-term variability. A model that captures one component may perform poorly on another. An annual temperature trend describes change over decades, whereas a next-day rain classifier must distinguish events using current meteorological conditions. Treating these questions as equivalent prediction problems obscures differences in information availability, target definition, and uncertainty.
 
-This project addresses four research questions: (RQ1) How much has global mean land temperature changed per decade, and did the trend differ after 1975? (RQ2) How accurately can monthly temperatures in ten cities be forecast 12 months ahead? (RQ3) Do unsupervised clusters of city climatologies resemble known climate zones? (RQ4) Can next-day rain and local hot days be predicted from current observations, and have locally defined hot days become more frequent?
+Public data make it possible to study these scales together. Their convenience nevertheless introduces practical challenges: the city temperature file exceeds 8.5 million rows; historical coverage changes over time; rainfall observations contain missing values and an imbalanced target; and station archives may combine multiple providers. Model comparisons therefore require explicit selection, reproducible preprocessing, and forecast origins that prevent information from the future entering training.
 
-The contributions are an integrated analysis spanning historical trends, regression forecasting, unsupervised learning, and supervised event classification; an explicit benchmark across the required course models; and a public, reproducible workflow. The claims in this template are methodological intentions, \emph{not completed experimental findings}.
+This project addresses four research questions. \textbf{RQ1:} How fast did global temperature increase per decade, and how did its descriptive rate differ before and after 1975? \textbf{RQ2:} How accurately can monthly temperature be predicted in ten cities, including a twelve-month lead? \textbf{RQ3:} Do clusters of temperature climatologies reproduce established climate zones? \textbf{RQ4:} How well can next-day rain and heat be classified, and how has locally defined hot-day frequency changed?
+
+The contribution is an integrated benchmark spanning data exploration, trend analysis, monthly forecasting, climate clustering, and daily event classification. Ten regression families are assessed at both one- and twelve-month leads against seasonal naive. Eight classification families are assessed for each event task. Descriptive trends and unsupervised diagnostics accompany the held-out scores but are not treated as equivalent predictive metrics.
 
 \section{Related Work}
-Global-scale assessments establish the context for observed climatic warming and its impacts \cite{ipcc2023}. Berkeley Earth distributes historical surface-temperature estimates and documents their coverage and uncertainty \cite{berkeley}. NOAA's Global Monitoring Laboratory reports atmospheric CO$_2$ measurements from Mauna Loa \cite{noaa}. K\"oppen--Geiger climate classifications provide a widely used reference for comparing climate zones \cite{beck2018}. Time-series evaluation requires respecting temporal ordering, and data preparation must be contained within cross-validation folds to avoid leakage \cite{sklearncv,sklearnpipeline}. Meteorological station archives can be accessed through Meteostat \cite{meteostat}.
+Reichstein \emph{et al.} connect learning from Earth-system data to process understanding, including temporal and spatial context \cite{reichstein}. This motivates seasonal features, historical lags, and the distinction between prediction and physical explanation. Our small tabular models differ from deep spatiotemporal architectures, making the comparison accessible within a course project without removing the need for physically meaningful interpretation.
 
-\todo{Add at least four relevant scholarly papers or technical reports, summarize what each contributes, and explain how this project differs. Do not count dataset portals alone as a substitute for substantive related work.}
+Rolnick \emph{et al.} survey machine-learning applications to climate-change mitigation and adaptation \cite{rolnick}. Their work places predictions within broader decisions rather than making accuracy an end in itself. Here, heat and rainfall provide examples of why missed events and false alerts matter. The study measures prediction errors, but does not estimate avoided health impacts or energy savings from an operational system.
+
+Ham, Kim, and Luo demonstrate deep-learning-based prediction of the El Ni\~no--Southern Oscillation at extended lead times \cite{ham}. That ocean--atmosphere target differs from city-level monthly air temperature. Their findings motivate investigating lead time, but cannot be transferred as expected accuracy for this dataset. We instead test twelve-month city hindcasts restricted to information available at its forecast origin.
+
+Rasp, Pritchard, and Gentine train a neural network to represent subgrid atmospheric processes within a climate model \cite{rasp}. This differs from direct statistical forecasting: a learned component substitutes for physical-process calculations. Our MLP uses historical tabular features and does not simulate atmospheric dynamics; retrospective accuracy cannot establish reliability under future forcing scenarios.
+
+Beck \emph{et al.} provide K\"oppen--Geiger reference maps, with their 2023 product including historical 1961--1990 classes \cite{beck2018,beck2023}. Those classes incorporate precipitation as well as temperature. Disagreement with temperature-based clusters is therefore informative rather than automatically an implementation failure. We sample the historical raster at documented city centers.
+
+Bergmeir, Hyndman, and Koo show that time-series cross-validation validity depends on assumptions such as residual dependence \cite{bergmeir}. We retain expanding temporal folds because nonstationarity and a prospective forecast setting are central here. Pedregosa \emph{et al.} describe the common scikit-learn framework used for consistent implementations \cite{pedregosa}. Relative to these works, this project emphasizes broad comparison, simple baselines, source auditing, and limitations rather than proposing a new algorithm.
 
 \section{Data and Study Design}
-\subsection{Data Sources}
-Table~\ref{tab:data} lists the four required sources. Observations are not interchangeable: they have different spatial scales, measurement units, calendars, and missing-data patterns. All data extraction dates, source URLs, filtering rules, and final sample sizes must be recorded.
+\subsection{Sources and Coverage}
+Table~\ref{tab:data} summarizes the source snapshot associated with the saved analysis. Temperatures use degrees Celsius and CO$_2$ uses parts per million. Berkeley Earth and Australian weather files came from versioned Kaggle distributions \cite{berkeley,kaggleberkeley,australia}; NOAA supplies CO$_2$ \cite{noaa}; Meteostat supplies the daily station product \cite{meteostat}. The analysis snapshot is dated October 30, 2026. Later updates must be treated as different source snapshots.
 \begin{table}[t]
-\caption{Required datasets and roles (fill in actual coverage).}
-\label{tab:data}
-\centering\footnotesize
-\begin{tabular}{p{0.19\columnwidth}p{0.37\columnwidth}p{0.32\columnwidth}}
-\toprule
-Dataset & Role & Measured coverage / sample size \\
-\midrule
-Berkeley Earth & Global annual trends; monthly city averages & \todo{Years, cities, rows} \\
-NOAA Mauna Loa & Annual mean CO$_2$ predictor from 1958 onward & \todo{Years, missing months} \\
-Rain in Australia & Next-day rain target and daily predictors & \todo{Dates, rows, locations} \\
-Meteostat station & Next-day extreme heat and yearly counts & \todo{Station ID, period, rows} \\
-\bottomrule
-\end{tabular}
-\end{table}
+\caption{Source records before task-specific filtering. Dates refer to the saved snapshot.}\label{tab:data}\centering\footnotesize
+\begin{tabular}{p{.28\columnwidth}r p{.43\columnwidth}}
+\toprule Source & Rows & Coverage and spatial extent \\\midrule
+Berkeley global & 3,192 & Jan. 1750--Dec. 2015; global aggregate \\
+Berkeley cities & 8,599,212 & Nov. 1743--Sept. 2013; 3,510 geographic keys \\
+NOAA CO$_2$ & 823 & Mar. 1958--Sept. 2026; Mauna Loa \\
+Australian rain & 145,460 & Nov. 2007--June 2017; 49 locations \\
+Meteostat 78526 & 9,445 & Jan. 2000--Dec. 2025; San Juan \\\bottomrule
+\end{tabular}\end{table}
+The global analysis uses \texttt{LandAndOceanAverageTemperature}, matching the integrated notebook. It is a blended global series rather than an unweighted city average or a land-only index. Trend estimation begins in 1850 and ends in 2015, the last complete year in this file; ``latest'' does not mean 2026. Earlier records remain useful for coverage auditing but are excluded from these trend fits.
 
-\subsection{Spatial and Temporal Selection}
-Select ten cities distributed across continents and climate types, using cities with adequate continuous coverage for the prescribed 2001--2013 test interval. State actual data availability rather than assuming it. Suggested candidates to verify are New York, London, Paris, Cairo, Mumbai, Tokyo, Sydney, Cape Town, S\~ao Paulo, and Buenos Aires. Document any replacements, geographic coordinates, and training coverage. Select one local station with at least twenty years of sufficiently complete daily maximum-temperature observations; record station identifier, elevation, latitude/longitude, and quality criteria. A Puerto Rico station may be used if its coverage satisfies the requirement.
+The full city audit defines a geographic key using city, country, latitude, and longitude. Its 3,510 keys are not the number of distinct city--country pairs. Forecasting selects 24,851 rows for New York, London, Paris, Cairo, Bombay, Tokyo, Sydney, Cape Town, S\~ao Paulo, and La Plata. Bombay is the dataset identifier for Mumbai; La Plata replaces the suggested Buenos Aires because the latter was absent from the selected source. The selection spans both hemispheres and six inhabited continents.
 
-\subsection{Quality Control and Missing Data}
-Convert dates to standardized timestamps, check duplicate station-date or city-month pairs, normalize temperature units to $^\circ$C, quantify missingness by field and period, and detect physically implausible values using source-specific rules. For yearly trends, use data from 1850 onward and discuss the greater uncertainty of earlier historical estimates. Do not silently interpolate long gaps. For the Australian observations, handle categorical wind-direction and location variables with encoders fitted only on training folds; fit numerical imputation and scaling within the pipeline.
+Most cities provide 152 valid test months from January 2001 through August 2013; New York provides 153 through September 2013. The nominal 2001--2013 interval contains 156 months, so full-year 2013 coverage must not be claimed. Valid histories begin in 1743 for London, Paris, and New York, and between 1796 and 1857 elsewhere. Lag construction further reduces usable samples.
 
-\subsection{Experimental Partitions}
-Monthly temperature models train using observations up to December 2000 and reserve January 2001 through December 2013 for testing, subject to dataset coverage. Use \texttt{TimeSeriesSplit} only within the training interval. If forecasting uses lagged observed temperatures, distinguish \emph{rolling one-step predictions} from true \emph{12-month-ahead forecasting}: a 12-month horizon cannot use actual future temperatures as features. Construct direct-horizon targets $y_{t+12}$ or recursive forecasts and explain the choice.
+Station 78526 is San Juan International (ICAO TJSJ), at 18.4333$^\circ$N, 66.0000$^\circ$W and 3~m elevation \cite{meteostat}. It is a coastal regional reference, not a Gurabo-campus instrument. The daily provider is an aggregated product; the experiment does not establish that every value is directly observed or that the series is homogenized for trend analysis.
 
-For Rain in Australia, order each location's observations by date and define the training set through 2015 and test set from 2016 onward. If calendar dates differ across locations or the file ends earlier, report the actual partitions. Apply chronological or group-aware folds where appropriate, rather than ordinary random cross-validation. For the local heat task, reserve a final chronological period for testing and use only observations known at prediction time.
+\subsection{Missing Data and Quality Control}
+The audit records 7,224 missing cells in the global table, 728,260 in the city table, 585 in the loaded NOAA table, 343,248 in rain, and 38,551 in station data. These include different fields and table sizes and are not comparable percentages or counts of missing target labels. Source columns retained for auditing can be much less complete than fields used in a particular model.
+
+City data are read in chunks of 250,000 rows, filtered, sorted, deduplicated by monthly date within city, and placed on a monthly calendar. Forecast rows with unavailable targets or required lag features are removed. No artificial observations or long-gap interpolations are introduced. Climatological means require at least twenty values for each calendar month during 1961--1990; all twenty selected profiles meet this rule.
+
+NOAA dates are normalized from year and month, and nonpositive concentration codes become missing values. Rain rows require valid \texttt{RainTomorrow} labels. Numerical imputation uses the training-fold median; categorical imputation uses its most frequent category followed by one-hot encoding, ignoring unseen categories. Scaling is also fitted within each pipeline. Heat features use calendar shifts after reindexing to a daily calendar, so missing dates cannot masquerade as one-day lags.
+
+\subsection{Partitions and Sampling}
+One-month models train through December 2000 and test on available months in 2001--2013. Three expanding \texttt{TimeSeriesSplit} folds operate inside training. Prior observed months are available for successive one-month forecasts; the entire test period is not recursively forecast from a single initial date.
+
+For the twelve-month task, the newest observed temperature feature is twelve months before its target. Training labels end in January 2000, consistent with information available at the first January 2001 target's origin. Cross-validation leaves an eleven-month gap. Target-month calendar variables are known in advance. This is a set of rolling-origin twelve-month hindcasts, not one forecast issued for the whole test interval.
+
+Rain training ends in 2015 and testing begins in 2016. Among 142,193 valid labels, 116,219 belong to training and 25,974 to testing. Every classifier uses the same 24,000-row training subset, selected at uniformly spaced positions after date-and-location sorting to keep SVM computation practical. The complete test set is retained. Calendar-based CV groups observations from the same date and leaves a one-date gap; rain uses three folds.
+
+Heat training ends in 2020; testing covers 2021--2025, the last five calendar years. Four expanding calendar-based folds operate within training. The heat test set contains 1,826 labels, including 236 positive cases. Test scores do not determine either event task's reporting model.
+
+\figwide{eda_climate.pdf}{Four exploratory views: (a) annual global temperature and ten-year mean, (b) anomalies relative to 1951--1980, (c) NOAA CO$_2$, and (d) seasonal cycles in three cities. CO$_2$ after 2015 is displayed for context but excluded from the aligned temperature experiment.}{fig:eda}
+\figwide{eda_rain.pdf}{Two additional exploratory views: RainTomorrow prevalence by location and the ten most incomplete rain fields. Prevalence excludes missing labels; missingness uses the original table.}{fig:rain_eda}
 
 \section{Methods}
-\subsection{Global Temperature Anomalies}
-For year $y$, aggregate the available global monthly land temperature series to an annual mean, with a documented minimum number of months. Define the anomaly relative to the prescribed baseline:
-\begin{equation}
-A_y=T_y-\frac{1}{30}\sum_{k=1951}^{1980}T_k.
-\end{equation}
-Display annual anomalies and a 10-year rolling mean. Fit linear trends $A_y=\beta_0+\beta_1(y-y_0)+\epsilon_y$ and second- and third-degree polynomial models. Report the linear warming rate as $10\hat\beta_1$ $^\circ$C/decade with a 95\% confidence interval. Because successive annual anomalies can be autocorrelated, prefer heteroskedasticity-and-autocorrelation-consistent standard errors or a documented block bootstrap over an unadjusted independent-error confidence interval.
+\subsection{Annual Anomalies and Trend Models}
+Twelve monthly global values are averaged for each year; incomplete years are excluded. The 1951--1980 reference contains thirty complete annual means and has average temperature 15.300~$^\circ$C. Anomalies are
+\begin{equation}A_y=T_y-\frac{1}{30}\sum_{k=1951}^{1980}T_k.\end{equation}
+The ten-year moving mean requires ten annual values. Linear regression estimates $A_y=\beta_0+\beta_1 y+\epsilon_y$, with warming rate $10\hat\beta_1$. Descriptive fits cover 1850--1974, 1975--2015, and the combined period. Ordinary intervals use the slope standard error and Student-$t$ critical value. An additional Newey--West HAC calculation allows annual residual dependence through five lags. A segmented model with separate intercepts and slopes at 1975 tests the slope difference. These are descriptive observational estimates, not causal attribution.
 
-Fit separate linear trends for 1850--1974 and 1975--latest available year. Compare their rates and uncertainty; do not claim a significant slope difference without an appropriate test. Starting in 1958, align annual CO$_2$ measurements to annual temperature anomalies and compare Ridge and Lasso regressions with and without CO$_2$. Since year and CO$_2$ are highly correlated over time, interpret coefficients as associations rather than causal effects; exclude later CO$_2$ values not available at the forecast issue date.
+Held-out trend experiments compare linear, quadratic, and cubic year functions. Training ends in 2000; testing covers 2001--2015. Four expanding training folds evaluate MAE. Ridge and Lasso compare year alone with year plus annual CO$_2$ over the common 1958--2015 interval. Their regularization search is $\alpha\in\{0.001,0.01,0.1,1,10,100\}$. Observed test-year CO$_2$ makes these conditional estimates rather than advance forecasts of unknown concentrations.
 
-\subsection{Monthly City Temperature Forecasting}
-For city $c$ at month $t$, derive lagged features $T_{c,t-1}$, $T_{c,t-2}$, $T_{c,t-3}$ and $T_{c,t-12}$, a trailing 12-month average computed from past observations, a numeric time trend, and cyclical month encodings:
-\begin{equation}
-s_t=\sin\left(\frac{2\pi m_t}{12}\right),\quad
-q_t=\cos\left(\frac{2\pi m_t}{12}\right).
-\end{equation}
-For a 12-month-ahead direct prediction, use predictors known at time $t$ and target $T_{c,t+12}$; for shorter horizons, report each horizon explicitly. Compare Linear Regression, Ridge, Lasso, Polynomial Regression, k-nearest neighbors, Decision Tree, Random Forest, Gradient Boosting, support-vector regression (SVR), and multilayer perceptron (MLP) regression. Use a pipeline for imputation, encoding (if needed), scaling (where relevant), and the estimator. Tune hyperparameters using time-series cross-validation on training data only.
+\subsection{Monthly Forecasting}
+For target month $t$, one-month features are $T_{t-1}$, $T_{t-2}$, $T_{t-3}$, $T_{t-12}$, the preceding twelve-month mean, year, and
+\begin{equation}\sin(2\pi m_t/12),\qquad\cos(2\pi m_t/12).\end{equation}
+The seasonal-naive baseline is $\hat T_t=T_{t-12}$. Every twelve-month regressor uses lags 12, 13, 14, and 24, a twelve-month mean ending at $t-12$, and calendar features. Its baseline is again $T_{t-12}$, now the latest same-month value at its origin.
 
-The required baseline is seasonal naive: $\hat{T}_t=T_{t-12}$ for a contemporaneous one-year seasonal reference. For a true 12-month-ahead forecast issued at time $t$, define the baseline consistently as $\hat T_{t+12}=T_t$. Benchmark all methods at equivalent issue times and horizons. Compare by city and overall using root mean squared error (RMSE), mean absolute error (MAE), and $R^2$.
+Linear regression supplies an unregularized reference; Ridge and Lasso shrink coefficients using $L_2$ and $L_1$ penalties. Polynomial regression expands standardized inputs to degree two and fits Ridge. k-NN predicts from nearby feature vectors. Decision trees learn thresholds; forests average multiple trees; gradient boosting adds trees sequentially. SVR models nonlinear relationships with an RBF kernel. The MLP uses a 32-unit hidden layer. These contrasting families test whether flexibility improves upon seasonal and linear structure.
 
-\subsection{Unsupervised Climate Zone Discovery}
-For each city, calculate twelve mean monthly temperatures over 1961--1990, the annual range of climatological monthly means, and latitude. For a broader clustering sample, use more than the ten forecasting cities if source coverage permits. Impute any missing climatology cautiously, standardize features, and fit principal component analysis (PCA) on the standardized matrix. Inspect explained variance and component loadings and interpret PC1/PC2 in physical terms without assuming their meaning in advance.
+Table~\ref{tab:search} gives the actual grids. Every forecast estimator uses a scaling pipeline. Search minimizes training CV MAE, and the reporting family is chosen separately for each city using that criterion. Linear regression and Naive Bayes receive CV with one specification because their implementation has no nontrivial tuning grid.
+\begin{table*}[!tbp]
+\caption{Executed search spaces; unlisted parameters use the executed library defaults. Stochastic estimators use seed 42 where supported.}\label{tab:search}\centering\footnotesize
+\begin{tabular}{p{.16\textwidth}p{.39\textwidth}p{.37\textwidth}}
+\toprule Family & Monthly regression & Rain and heat classification \\\midrule
+Linear / Logistic & Ordinary least squares; one specification & Logistic $C\in\{0.1,1\}$; balanced classes \\
+Ridge / Lasso & Ridge $\alpha\in\{0.1,1,10\}$; Lasso $\alpha\in\{0.001,0.01,0.1\}$ & Not applicable \\
+Polynomial & Degree 2; Ridge $\alpha\in\{1,10\}$ & Not applicable \\
+k-NN & Neighbors $\{3,7\}$ & Neighbors $\{9,25\}$ \\
+Naive Bayes & Not applicable & Gaussian; one specification \\
+Decision tree & Maximum depth $\{4,8\}$ & Maximum depth $\{5,10\}$; balanced classes \\
+Random forest & 80 trees; depth $\{5,\mathrm{None}\}$ & 100 trees; depth $\{8,\mathrm{None}\}$; balanced classes \\
+Gradient boosting & Estimators $\{80,120\}$ & Estimators $\{75,125\}$ \\
+SVR / SVM & RBF; $C\in\{1,10\}$ & RBF; $C\in\{0.1,1\}$; balanced classes \\
+MLP & Hidden layer (32); $\alpha\in\{0.001,0.1\}$; max. 2,500 iterations & Hidden layer (32); $\alpha\in\{0.001,0.1\}$; max. 1,500 iterations \\\bottomrule
+\end{tabular}\end{table*}
 
-Apply k-means for a documented range of $k$ (for example $2$--$10$), with a fixed seed and multiple initializations. Evaluate within-cluster inertia (elbow curve) and silhouette score; compare mapped clusters with reference K\"oppen--Geiger classes for at least twenty recognizable cities. Since k-means labels are arbitrary and climate-zone classes need not coincide one-to-one with clusters, use a contingency table and, where appropriate, adjusted Rand index or normalized mutual information in addition to qualitative geographic comparison.
+\subsection{PCA and Climate Clustering}
+Twenty cities are represented by twelve monthly 1961--1990 temperatures, their annual range, and latitude. Features are standardized before PCA and k-means. PCA supplies a two-dimensional view and interpretable loadings. K-means is fitted on all fourteen standardized features, not only the displayed components.
 
-\subsection{RainTomorrow Classification}
-Use observed meteorological variables available on date $t$ to predict \texttt{RainTomorrow}. Do not include the target or any features recorded after the prediction cutoff. Compare Logistic Regression, k-NN, Naive Bayes, SVM, Decision Tree, Random Forest, Gradient Boosting, and MLP. Use preprocessing pipelines and tune hyperparameters with chronological cross-validation. Address the approximately imbalanced rain target through class weights, resampling only inside training folds where justified, or threshold selection using validation data. Report prevalence in the actual sample. A high accuracy can be misleading when the positive class is uncommon; prioritize F1, recall, precision, and ROC-AUC and show a confusion matrix.
+The search tests $k=2,\ldots,10$ with twenty initializations and seed 42. Inertia and silhouette guide selection. A Natural Earth basemap supports geographic visualization \cite{naturalearth}. Independent K\"oppen labels are sampled from Beck \emph{et al.}'s 1961--1990 raster at 0.1-degree resolution, from Figshare article 21789074 version 2 \cite{beck2023}. GeoNames supplies city-center points \cite{geonames}. Berkeley cell coordinates can differ from those city centers; this mismatch limits reference comparability. A contingency comparison and adjusted Rand index (ARI) avoid assuming numerical cluster IDs correspond directly to climate names.
 
-\subsection{Local Hot-Day Classification and Trend}
-Choose a local station with at least twenty years of daily weather records. Define a hot day as daily maximum temperature above the \emph{90th percentile of the full available maximum-temperature record}, as requested by the assignment, and state the reference period and consequences of this threshold definition. For a strict predictive evaluation, estimate the threshold from the training/reference period and freeze it before testing to avoid test-derived labels. Document any difference between the professor's full-record definition and this leakage-safe sensitivity analysis.
+\subsection{RainTomorrow and Hot-Day Classification}
+Australian models predict tomorrow's rain using meteorological information recorded on the predictor date. Date, target labels, and possible future-rain proxy fields are excluded. Prediction is issued after the day's observations, permitting afternoon measurements. Logistic regression, k-NN, Gaussian Naive Bayes, SVM, decision tree, random forest, gradient boosting, and MLP share the same data and temporal folds.
 
-Using observations available by day $t$, predict whether day $t+1$ exceeds the threshold with all classification models. Separately compute hot-day counts and rates by calendar year (accounting for different numbers of valid observations) and fit a linear trend in frequency. Report slope per decade, uncertainty, data coverage, and whether the trend is statistically distinguishable from zero. Station moves, urbanization, and missingness can bias local trends.
+Supported classifiers use balanced class weights; other families retain their standard objectives. Test data are not resampled, and thresholds are not optimized using test scores. CV maximizes F1. SVM ROC analysis uses its decision function rather than calibrated probabilities.
 
-\subsection{Metrics and Model Selection}
-For observed $y_i$ and predictions $\hat y_i$, define
-\begin{equation}
-\mathrm{MAE}=\frac1n\sum_i |y_i-\hat y_i|,\quad
-\mathrm{RMSE}=\sqrt{\frac1n\sum_i(y_i-\hat y_i)^2}.
-\end{equation}
-Also report $R^2=1-\sum_i(y_i-\hat y_i)^2/\sum_i(y_i-\bar y)^2$. For binary events, report precision, recall, F1, ROC-AUC, and confusion matrices on unseen test data. Use validation scores to choose hyperparameters; evaluate the final tuned model once on the reserved test set. Record mean and standard deviation of cross-validation scores, model training times, and per-observation or batch prediction times under a stated hardware environment.
+For heat, $q_{0.90}$ denotes the full-record 90th percentile of maximum temperature and $H_d=\mathbb{1}(T_{\max,d}>q_{0.90})$. The threshold is 32.2~$^\circ$C. Predicting day $d$ uses maximum-temperature lags 1, 2, 3, and 7, a seven-day mean ending on $d-1$, previous-day minimum temperature and precipitation, and cyclical month features. Target-day observed temperature is excluded.
+
+The full-record label follows the assignment but is retrospective. The training-only percentile also equals 32.2~$^\circ$C in this snapshot, so labels coincide. That coincidence does not make full-record threshold estimation generally appropriate for deployment. Annual counts and rates are evaluated separately, retaining years with at least 90\% valid maximum-temperature coverage. Twenty-five years meet the rule.
+
+\subsection{Metrics and Timing}
+Forecast evaluation uses
+\begin{equation}\mathrm{MAE}=\frac1n\sum_i|y_i-\hat y_i|,\quad\mathrm{RMSE}=\sqrt{\frac1n\sum_i(y_i-\hat y_i)^2},\end{equation}
+and $R^2=1-\sum_i(y_i-\hat y_i)^2/\sum_i(y_i-\bar y)^2$. Skill is $1-E_{\rm model}/E_{\rm naive}$ on matching city months, averaged without population weighting. Mean city RMSE is distinguished from pooled RMSE.
+
+Classification uses positive-class precision, recall, F1, ROC-AUC, and confusion matrices; rain accuracy is also reported by location. Reporting models use training CV F1. Search timings include CV, tuning, and refitting. Prediction time measures a batch \texttt{predict} call; classifier ROC-score computation is outside that interval. These are elapsed CPU timings with two search workers, not normalized deployment latency.
 
 \section{Experimental Workflow: Implementation Steps}
-This section specifies the sequence of work and should be revised into past tense after the experiments are completed.
+The saved integrated run followed these steps:
 \begin{enumerate}[leftmargin=*,itemsep=2pt]
-\item \textbf{Initialize project:} create a GitHub repository, \texttt{requirements.txt} with pinned versions, \texttt{README.md}, and a single \texttt{ProjectX\_TeamXX.ipynb}; set seeds and record Python version.
-\item \textbf{Acquire data:} download Berkeley Earth and Rain in Australia CSVs, NOAA CO$_2$ series, and the selected Meteostat station; record licenses and exact download instructions in \texttt{data/README.md}. Do not commit large raw data.
-\item \textbf{Verify schemas:} print each dataset's shape, date coverage, missing values, units, and class distribution; select ten cities and a local station with validated coverage.
-\item \textbf{Explore:} create at least six interpreted figures: annual temperature anomaly with rolling mean; CO$_2$ curve; seasonal monthly patterns for three contrasting cities; Australian rainfall prevalence by location; missingness/coverage; and hot-day frequency or spatial climate distribution.
-\item \textbf{Build targets and features:} compute baseline anomalies, chronological lags, annual CO$_2$ join, twelve-month-ahead targets, city climatology vectors, RainTomorrow labels, and next-day heat labels without temporal leakage.
-\item \textbf{Freeze test sets:} document exact date boundaries and retain held-out sets untouched until final evaluation.
-\item \textbf{Fit trend models:} compare global linear/polynomial fits, pre/post-1975 slopes, confidence intervals, and Ridge/Lasso with and without CO$_2$.
-\item \textbf{Fit forecast models:} tune all ten required regressors under \texttt{TimeSeriesSplit}, benchmark seasonal naive, and score city-level and aggregated test predictions.
-\item \textbf{Cluster climates:} fit PCA, inspect loadings, tune k-means with elbow/silhouette criteria, map groups, and compare at least twenty cities with K\"oppen reference types.
-\item \textbf{Classify events:} tune all eight classifiers for Australian rain and station hot days; handle class imbalance; create ROC curves and confusion matrices; estimate the hot-day frequency trend.
-\item \textbf{Interpret and reproduce:} compile one comparison table per task (or a master table), perform error analysis, cite all sources, run the notebook cleanly from start to finish, and export all figures for this report.
+\item Acquire or reuse versioned source files and record hashes of the exact snapshots.
+\item Audit coverage, missingness, city identifiers, station metadata, and event labels; filter city data in chunks.
+\item Construct annual anomalies, calendar features, temporal lags, climatologies, and targets; produce exploratory figures.
+\item Establish chronological holdouts and folds; fit predictive preprocessing within training pipelines.
+\item Evaluate trend models, ten regressors per city, the ten-family twelve-month experiment, and eight classifiers per event task.
+\item Export PCA, k-means diagnostics, geographical maps, and twenty-city reference comparisons.
+\item Interpret validation-selected models using residuals, confusion matrices, and permutation importance; save comparison tables and package versions.
 \end{enumerate}
+The master comparison contains 110 one-month rows, 110 twelve-month rows, sixteen classification rows, seven global predictive specifications, and two unsupervised diagnostic rows: 245 total. Their scientific roles differ, so a single score must not rank all tasks together. The notebook's nine sections and this paper's written-report structure are separate deliverable requirements.
 
 \section{Results}
-\textbf{Important:} the example tables below are deliberately blank. Replace them only with measurements computed from the actual held-out test sets. Cite every generated figure in nearby prose and describe what is visible, rather than repeating its caption.
+\subsection{Exploratory Patterns}
+Figure~\ref{fig:eda}(a) shows interannual global variability around a rising long-term mean; its ten-year curve makes the late-record increase clearer. Figure~\ref{fig:eda}(b) expresses the same temperature record against a fixed baseline, avoiding interpretation based on an arbitrary absolute offset.
 
-\subsection{Long-Term Warming and CO$_2$}
-\begin{table}[t]
-\caption{Trend estimates and uncertainty. No results have been computed yet.}
-\label{tab:trends}\centering\footnotesize
-\begin{tabular}{lcc}
-\toprule
-Period & Rate ($^\circ$C/decade) & 95\% CI \\
-\midrule
-1850--latest & \placeholder & \placeholder \\
-1850--1974 & \placeholder & \placeholder \\
-1975--latest & \placeholder & \placeholder \\
+The CO$_2$ series in Fig.~\ref{fig:eda}(c) rises while retaining a seasonal cycle. Its longer coverage does not extend the temperature experiment past 2015. In Fig.~\ref{fig:eda}(d), Sydney's seasonal phase contrasts with London and Cairo. This supports cyclical month features and city-specific evaluation instead of an uninterpreted pooled seasonal profile.
+
+Figure~\ref{fig:rain_eda}(a) shows substantial geographic variation in rain-label prevalence, making national accuracy insufficient for local assessment. Figure~\ref{fig:rain_eda}(b) shows especially incomplete cloud, evaporation, and sunshine fields. Imputation permits comparison but cannot remove bias from changing missingness. These six panels provide distinct exploration of trend, anomaly, CO$_2$, seasonality, class balance, and data quality.
+
+\subsection{Warming and \texorpdfstring{CO$_2$}{CO2}}
+Table~\ref{tab:slopes} reports descriptive rates. The 1975--2015 slope is approximately 4.56 times the earlier slope, differing by 0.1282~$^\circ$C per decade. This is a comparison at the assignment-specified 1975 split, rather than a search over possible break dates. Ordinary intervals are supplemented with HAC intervals and a segmented slope comparison in the discussion.
+\begin{table}[!tbp]
+\caption{Descriptive warming in $^\circ$C/decade. Ordinary and HAC (five annual lags) 95\% intervals.}\label{tab:slopes}\centering\scriptsize
+\begin{tabular}{lrrr}
+\toprule Period & Rate & Ordinary CI & HAC CI \\\midrule
+1850--2015 & 0.0535 & [0.0486, 0.0584] & [0.0426, 0.0644] \\
+1850--1974 & 0.0360 & [0.0296, 0.0424] & [0.0275, 0.0445] \\
+1975--2015 & 0.1642 & [0.1405, 0.1878] & [0.1419, 0.1864] \\
 \bottomrule
-\end{tabular}
-\end{table}
-\todo{Insert global anomaly and CO2 graphs exported from the notebook. Discuss whether the post-1975 trend differs, and compare Ridge/Lasso with and without CO2 using a fair time split.}
-
-\subsection{Temperature Forecasting}
-\begin{table}[t]
-\caption{Regression comparison on held-out months (expand to every required model).}
-\label{tab:forecast}\centering\footnotesize
-\begin{tabular}{lccc}
-\toprule
-Model & RMSE ($^\circ$C) & MAE ($^\circ$C) & $R^2$ \\
-\midrule
-Seasonal naive & -- & -- & -- \\
-Linear / Ridge / Lasso & -- & -- & -- \\
-Polynomial / k-NN & -- & -- & -- \\
-Tree / RF / boosting & -- & -- & -- \\
-SVR / MLP & -- & -- & -- \\
+\end{tabular}\end{table}
+\begin{table*}[!tbp]
+\caption{Global held-out results, 2001--2015. CV is training MAE mean $\pm$ SD. CO$_2$ models condition on observed test-year concentrations.}\label{tab:globalmodels}\centering\scriptsize
+\begin{tabular}{llrrrrrr}
+\toprule Specification & Best parameters & CV MAE & CV SD & MAE & RMSE & $R^2$ & Train s \\\midrule
+Linear trend & {} & 0.182 & 0.042 & 0.321 & 0.328 & -16.662 & 0.04 \\
+Polynomial trend degree 2 & {} & 0.325 & 0.227 & 0.147 & 0.161 & -3.231 & 0.04 \\
+Polynomial trend degree 3 & {} & 0.479 & 0.222 & 0.171 & 0.184 & -4.516 & 0.03 \\
+Ridge & {'reg\_\_alpha': 1} & 0.130 & 0.049 & 0.161 & 0.174 & -3.955 & 0.11 \\
+Lasso & {'reg\_\_alpha': 0.01} & 0.131 & 0.039 & 0.178 & 0.190 & -4.911 & 0.12 \\
+Ridge + CO$_2$ & {'reg\_\_alpha': 0.1} & 0.093 & 0.027 & 0.101 & 0.119 & -1.313 & 0.14 \\
+Lasso + CO$_2$ & {'reg\_\_alpha': 0.001} & 0.102 & 0.038 & 0.092 & 0.109 & -0.956 & 0.12 \\
 \bottomrule
-\end{tabular}
-\end{table}
-\todo{Replace grouped rows with one row per algorithm. Add the optimal hyperparameters, mean+SD CV score, training time, prediction time and a per-city evaluation table or supplementary table. Insert actual vs predicted plots for three cities and a horizon-dependent error plot.}
+\end{tabular}\end{table*}
+All seven global predictive specifications have negative test $R^2$ (Table~\ref{tab:globalmodels}). Smooth descriptive fits therefore do not establish reliable extrapolation relative to the test-period mean. Quadratic regression reduces MAE relative to the full-history linear model but still has $R^2=-3.231$.
 
-\subsection{Climate Clusters}
-\todo{Report number of cities, first two PCA explained-variance ratios, component loadings, tested k values, selected k, silhouette score, elbow interpretation, a PC1--PC2 scatterplot and a world map. Add comparison with at least 20 K\"oppen-labelled cities and discuss mismatches.}
+On the common-period comparisons, CO$_2$ reduces Ridge MAE from 0.161 to 0.101~$^\circ$C and Lasso MAE from 0.178 to 0.092~$^\circ$C. Lasso plus CO$_2$ has the smallest conditional test MAE, but $R^2$ remains negative ($-0.956$). The result supports an association in this snapshot, not causal attribution or unconditional forecasting success.
 
+\subsection{One-Month City Forecasts}
+Table~\ref{tab:regression} reports every required family. Polynomial regression has the smallest mean city test MAE, 0.829~$^\circ$C, versus 1.179~$^\circ$C for seasonal naive. This is a retrospective test summary, not the selection rule. Linear, Ridge, and Lasso remain competitive, whereas the decision tree is close to baseline on average.
+\begin{table*}[!tbp]
+\caption{One-month held-out comparison. Entries are unweighted means across ten cities. Each city has its own tuned model; exact parameters are in the master CSV.}\label{tab:regression}\centering\scriptsize
+\begin{tabular}{lrrrrrrr}
+\toprule Family & CV MAE & CV SD & MAE & RMSE & $R^2$ & Train s & Pred. s \\\midrule
+Polynomial & 0.940 & 0.109 & 0.829 & 1.052 & 0.926 & 0.05 & 0.0010 \\
+Linear & 0.890 & 0.029 & 0.871 & 1.112 & 0.915 & 0.04 & 0.0010 \\
+Ridge & 0.890 & 0.029 & 0.871 & 1.112 & 0.915 & 0.06 & 0.0009 \\
+Lasso & 0.889 & 0.028 & 0.873 & 1.114 & 0.914 & 0.06 & 0.0008 \\
+SVR & 1.407 & 0.427 & 0.920 & 1.158 & 0.911 & 0.51 & 0.0095 \\
+MLP & 1.457 & 0.377 & 0.924 & 1.176 & 0.891 & 5.10 & 0.0013 \\
+kNN & 0.942 & 0.050 & 0.924 & 1.167 & 0.911 & 0.05 & 0.0138 \\
+Gradient boosting & 0.962 & 0.049 & 0.935 & 1.178 & 0.913 & 1.11 & 0.0015 \\
+Random forest & 0.922 & 0.031 & 0.964 & 1.202 & 0.909 & 1.25 & 0.0265 \\
+Decision tree & 1.051 & 0.042 & 1.167 & 1.458 & 0.858 & 0.05 & 0.0009 \\
+Seasonal naive & -- & -- & 1.179 & 1.491 & 0.857 & 0.00 & 0.0000 \\
+\bottomrule
+\end{tabular}\end{table*}
+Validation-selected reporting families differ by city (Table~\ref{tab:cities}) and average 0.855~$^\circ$C test MAE. Bombay has the smallest selected-model MAE, 0.442~$^\circ$C; New York and Paris have larger errors of 1.305 and 1.277~$^\circ$C. These are conditional results, not an intrinsic city-predictability ranking independent of variability and source quality.
+\begin{table*}[!tbp]
+\caption{One-month reporting models selected by training CV MAE, with held-out results.}\label{tab:cities}\centering\scriptsize
+\begin{tabular}{lllrrrr}
+\toprule City & Model & Parameters & CV MAE & MAE & RMSE & $R^2$ \\\midrule
+Bombay & Polynomial & {'alpha': 10, 'degree': 2} & 0.459 $\pm$ 0.005 & 0.442 & 0.543 & 0.865 \\
+Cairo & Linear & {} & 0.791 $\pm$ 0.007 & 0.794 & 1.002 & 0.969 \\
+Cape Town & Lasso & {'alpha': 0.001} & 0.653 $\pm$ 0.037 & 0.568 & 0.707 & 0.945 \\
+La Plata & Lasso & {'alpha': 0.01} & 0.951 $\pm$ 0.028 & 0.939 & 1.198 & 0.938 \\
+London & Ridge & {'alpha': 10} & 1.147 $\pm$ 0.048 & 1.013 & 1.324 & 0.931 \\
+New York & Lasso & {'alpha': 0.01} & 1.282 $\pm$ 0.027 & 1.305 & 1.658 & 0.967 \\
+Paris & Ridge & {'alpha': 1} & 1.287 $\pm$ 0.045 & 1.277 & 1.662 & 0.919 \\
+Sydney & Lasso & {'alpha': 0.01} & 0.607 $\pm$ 0.025 & 0.580 & 0.750 & 0.869 \\
+São Paulo & Polynomial & {'alpha': 10, 'degree': 2} & 0.718 $\pm$ 0.033 & 0.779 & 0.965 & 0.829 \\
+Tokyo & Polynomial & {'alpha': 10, 'degree': 2} & 0.882 $\pm$ 0.010 & 0.850 & 1.087 & 0.982 \\
+\bottomrule
+\end{tabular}\end{table*}
+\figwide{phase3_forecast_Bombay.png}{Bombay forecast detail: actual observations, seasonal naive, and CV-selected Polynomial. The early-test view illustrates seasonal tracking; metrics use all available held-out months.}{fig:bombay}
+\figone{phase3_forecast_Cairo.png}{Cairo forecast detail with the CV-selected Linear model.}{fig:cairo}
+\figone{phase3_forecast_Cape_Town.png}{Cape Town forecast detail with the CV-selected Lasso model.}{fig:cape}
+Figures~\ref{fig:bombay}--\ref{fig:cape} illustrate strong seasonal tracking in three cities. Deviations remain: reproducing the typical seasonal peak is easier than predicting every unusually warm or cool month. All ten cities remain represented in the numerical comparison.
+
+\subsection{Twelve-Month Lead}
+All ten regression families were evaluated at twelve months (Table~\ref{tab:horizon}). Models chosen separately for each city by training CV average 0.922~$^\circ$C held-out MAE, 1.168~$^\circ$C mean city RMSE, and 0.907 mean city $R^2$. Their mean within-city MAE skill is 21.0\% over seasonal naive. The best family by retrospective mean test MAE is Polynomial; that test ranking is descriptive and does not replace validation selection.
+
+\begin{table*}[!tbp]
+\caption{Twelve-month held-out results on the same city target months as the one-month experiment. All families use origin-available features. Mean CV SD is fold variation, not an inferential interval.}\label{tab:horizon}\centering\scriptsize
+\begin{tabular}{lrrrrrrr}
+\toprule Family & CV MAE & CV SD & MAE & RMSE & $R^2$ & Train s & Pred. s \\\midrule
+Polynomial & 1.048 & 0.187 & 0.896 & 1.131 & 0.911 & 0.05 & 0.0009 \\
+Linear & 0.916 & 0.036 & 0.918 & 1.165 & 0.907 & 0.03 & 0.0009 \\
+Ridge & 0.915 & 0.037 & 0.919 & 1.165 & 0.907 & 0.06 & 0.0011 \\
+Lasso & 0.912 & 0.033 & 0.921 & 1.168 & 0.907 & 0.06 & 0.0007 \\
+Gradient boosting & 1.002 & 0.059 & 0.943 & 1.190 & 0.905 & 1.02 & 0.0012 \\
+MLP & 1.616 & 0.515 & 0.948 & 1.203 & 0.893 & 4.81 & 0.0014 \\
+kNN & 0.974 & 0.057 & 0.972 & 1.212 & 0.898 & 0.05 & 0.0134 \\
+SVR & 1.453 & 0.446 & 0.988 & 1.245 & 0.898 & 0.44 & 0.0099 \\
+Random forest & 0.947 & 0.039 & 1.004 & 1.249 & 0.894 & 1.08 & 0.0245 \\
+Decision tree & 1.066 & 0.045 & 1.143 & 1.432 & 0.862 & 0.06 & 0.0009 \\
+Seasonal naive & -- & -- & 1.179 & 1.491 & 0.857 & 0.00 & 0.0000 \\
+\bottomrule
+\end{tabular}\end{table*}
+\figwide{horizon.pdf}{Errors for all ten regressors at one- and twelve-month leads, and twelve-month baseline skill for models selected by training CV.}{fig:horizon}
+Figure~\ref{fig:horizon} compares identical target dates. SVR has the largest absolute increase in mean MAE, 0.068~$^\circ$C. This compares the two measured leads, not every possible horizon. Different features, conservative training endpoints and retuned hyperparameters contribute to the changes, so the experiment does not isolate a single physical mechanism.
+
+\subsection{Climate Structure and Reference Agreement}
+The first two PCs explain 62.9\% and 33.7\% of standardized-profile variance (96.6\% combined). PC1 loads positively on monthly temperatures and negatively on annual range; PC2 contrasts seasonal patterns. These descriptions interpret this sample's loadings rather than define universal climate coordinates.
+\figone{phase4_pca.png}{PCA of twenty standardized climatologies, annual range, and latitude. Two components explain 96.6\% of sample variance.}{fig:pca}
+\figone{phase4_cluster_diagnostics.png}{K-means diagnostics for $k=2$--10. Silhouette peaks at 0.608 for three groups.}{fig:clusterdiag}
+The PCA in Fig.~\ref{fig:pca} exposes broad temperature/seasonality structure. Figure~\ref{fig:clusterdiag} favors $k=3$: inertia drops from 141.24 to 49.73 between two and three clusters, and silhouette peaks at 0.6076. Further clusters reduce inertia but have lower silhouettes.
+\figwide{phase4_geo_clusters.png}{World distribution of three temperature-based groups, using Berkeley coordinates. Reference labels are independently sampled at GeoNames city centers. Basemap: Natural Earth, public domain.}{fig:world}
+\begin{table}[t]\caption{Twenty-city comparison. Coordinates are Berkeley temperature-cell coordinates; K\"oppen labels use independently sampled city centers. Cluster IDs are arbitrary.}\label{tab:koppen}\centering\scriptsize
+\begin{tabular}{lccrr}\toprule City & Cluster & K\"oppen & Latitude & Longitude \\\midrule
+
+Bangkok & 2 & Aw & 13.66 & 99.91 \\
+Berlin & 1 & Dfb & 52.24 & 13.14 \\
+Bombay & 2 & Am & 18.48 & 72.68 \\
+Cairo & 2 & BWh & 29.74 & 31.38 \\
+Cape Town & 0 & Csb & -32.95 & 18.19 \\
+Chicago & 1 & Dfa & 42.59 & -87.27 \\
+La Plata & 0 & Cfa & -34.56 & -58.38 \\
+Lima & 0 & BWh & -12.05 & -77.26 \\
+London & 1 & Cfb & 52.24 & -0.00 \\
+Los Angeles & 1 & Csa & 34.56 & -118.70 \\
+Melbourne & 0 & Cfb & -37.78 & 144.41 \\
+Moscow & 1 & Dfb & 55.45 & 36.85 \\
+Nairobi & 0 & Cfb & -0.80 & 36.16 \\
+New York & 1 & Dfa & 40.99 & -74.56 \\
+Paris & 1 & Cfb & 49.03 & 2.45 \\
+Peking & 1 & Dwa & 39.38 & 116.53 \\
+Singapore & 2 & Af & 0.80 & 103.66 \\
+Sydney & 0 & Cfa & -34.56 & 151.78 \\
+S\~ao Paulo & 0 & Cfa & -23.31 & -46.31 \\
+Tokyo & 1 & Cfa & 36.17 & 139.23 \\
+
+\bottomrule\end{tabular}\end{table}
+The map in Fig.~\ref{fig:world} has broad hemispheric structure: cluster 0 contains Southern Hemisphere cities, cluster 1 includes many Northern Hemisphere seasonal profiles, and cluster 2 includes warm tropical/subtropical profiles. Yet Cairo and Singapore share cluster 2 despite BWh and Af reference classes. Lima and Cape Town share cluster 0 despite BWh and Csb (Table~\ref{tab:koppen}). ARI is only 0.0596. A good silhouette establishes separation in the selected space, not recovery of detailed K\"oppen zones. Omitted precipitation and calendar phase plausibly explain part of this mismatch.
+
+\begin{figure}[!tbp]\centering\includegraphics[width=\columnwidth]{importance_compact.pdf}
+\caption{Permutation importance for CV-selected classifiers on fixed 1,000-row test samples, three repeats. Bars show F1 reduction after permutation and repeat variability.}\label{fig:importance}\end{figure}
 \subsection{Next-Day Rain and Heat}
-\begin{table}[t]
-\caption{Classification results template (evaluate rain and heat separately).}
-\label{tab:classification}\centering\footnotesize
-\begin{tabular}{lcccc}
-\toprule
-Model & Precision & Recall & F1 & ROC-AUC \\
-\midrule
-Logistic / k-NN & -- & -- & -- & -- \\
-Naive Bayes / SVM & -- & -- & -- & -- \\
-Tree / RF / boosting & -- & -- & -- & -- \\
-MLP & -- & -- & -- & -- \\
+Tables~\ref{tab:rain} and \ref{tab:heat} contain all event families. Rain SVM is selected because its training CV F1 is highest, 0.645. Test F1 is 0.640, ROC-AUC is 0.869, recall is 76.7\%, and precision is 55.0\%. MLP has slightly higher test AUC, 0.874, but is not substituted after seeing that result.
+\begin{table*}[!tbp]
+\caption{Next-day rain: every classifier. CV F1 mean $\pm$ SD and held-out test metrics.}\label{tab:rain}\centering\scriptsize
+\begin{tabular}{lllrrrrrr}
+\toprule Model & Parameters & CV F1 & Precision & Recall & F1 & AUC & Train s & Pred. s \\\midrule
+Logistic & {'C': 0.1} & 0.633 $\pm$ 0.013 & 0.527 & 0.744 & 0.617 & 0.856 & 3.51 & 0.1081 \\
+kNN & {'n\_neighbors': 9} & 0.519 $\pm$ 0.023 & 0.703 & 0.424 & 0.529 & 0.826 & 1.85 & 2.9822 \\
+Naive Bayes & {} & 0.486 $\pm$ 0.022 & 0.348 & 0.692 & 0.463 & 0.720 & 0.37 & 0.0924 \\
+SVM & {'C': 1} & 0.645 $\pm$ 0.010 & 0.550 & 0.767 & 0.640 & 0.869 & 82.66 & 22.9046 \\
+Decision tree & {'max\_depth': 5} & 0.573 $\pm$ 0.014 & 0.463 & 0.739 & 0.569 & 0.820 & 0.91 & 0.0495 \\
+Random forest & {'max\_depth': 8} & 0.622 $\pm$ 0.012 & 0.511 & 0.719 & 0.597 & 0.839 & 5.07 & 0.1261 \\
+Gradient boosting & {'n\_estimators': 125} & 0.585 $\pm$ 0.024 & 0.733 & 0.482 & 0.582 & 0.857 & 29.45 & 0.0791 \\
+MLP & {'alpha': 0.1} & 0.621 $\pm$ 0.023 & 0.724 & 0.552 & 0.627 & 0.874 & 16.43 & 0.0556 \\
 \bottomrule
-\end{tabular}
-\end{table}
-\todo{Expand to one model per row; add test confusion matrices, ROC curves, Australian per-location accuracy, class prevalence, and local annual hot-day counts with a trend line and uncertainty. Include CV means and SDs and elapsed times.}
+\end{tabular}\end{table*}
+\begin{table*}[!tbp]
+\caption{Next-day heat: every classifier. CV F1 mean $\pm$ SD and held-out test metrics.}\label{tab:heat}\centering\scriptsize
+\begin{tabular}{lllrrrrrr}
+\toprule Model & Parameters & CV F1 & Precision & Recall & F1 & AUC & Train s & Pred. s \\\midrule
+Logistic & {'C': 1} & 0.303 $\pm$ 0.029 & 0.282 & 0.886 & 0.428 & 0.876 & 0.17 & 0.0134 \\
+kNN & {'n\_neighbors': 9} & 0.146 $\pm$ 0.094 & 0.613 & 0.288 & 0.392 & 0.818 & 0.32 & 0.0692 \\
+Naive Bayes & {} & 0.293 $\pm$ 0.037 & 0.290 & 0.839 & 0.431 & 0.859 & 0.08 & 0.0139 \\
+SVM & {'C': 1} & 0.295 $\pm$ 0.032 & 0.301 & 0.928 & 0.454 & 0.869 & 2.91 & 0.2217 \\
+Decision tree & {'max\_depth': 5} & 0.299 $\pm$ 0.036 & 0.303 & 0.864 & 0.448 & 0.862 & 0.18 & 0.0143 \\
+Random forest & {'max\_depth': 8} & 0.326 $\pm$ 0.057 & 0.362 & 0.771 & 0.493 & 0.878 & 2.66 & 0.0366 \\
+Gradient boosting & {'n\_estimators': 125} & 0.279 $\pm$ 0.062 & 0.644 & 0.322 & 0.429 & 0.885 & 2.93 & 0.0159 \\
+MLP & {'alpha': 0.001} & 0.110 $\pm$ 0.090 & 0.685 & 0.212 & 0.324 & 0.876 & 2.28 & 0.0146 \\
+\bottomrule
+\end{tabular}\end{table*}
+Heat random forest has the highest CV F1, 0.326, and test F1 0.493. Test AUC is 0.878, recall 77.1\%, and precision 36.2\%. Gradient boosting has higher test AUC but much lower positive recall at its default decision rule. Ranking quality and usefulness at a particular threshold therefore differ.
+\figone{phase5_rain_roc.png}{Rain ROC curves for all eight families on the holdout; the diagonal indicates chance ranking.}{fig:rainroc}
+\figone{phase5_heat_roc.png}{Heat ROC curves. Similar AUC can coexist with markedly different precision and recall.}{fig:heatroc}
+Figures~\ref{fig:rainroc} and \ref{fig:heatroc} show discrimination beyond chance but do not establish calibration or safe alert thresholds. Naive Bayes is weaker for rain ranking. Heat curves are closer even where F1 differs substantially.
+\figone{confusions.pdf}{CV-selected model confusion matrices. Rain SVM misses 1,386 events and produces 3,733 false alarms. Heat random forest misses 54 events and produces 321 false alarms.}{fig:confusions}
+Rain accuracy is 80.3\%, with 5,946 positive labels among 25,974 cases (22.9\%). An always-no-rain rule already achieves 77.1\% accuracy while detecting no rain. Heat accuracy is 79.5\%, below the 87.1\% always-no-heat accuracy, but that trivial rule has zero recall. Figure~\ref{fig:confusions} exposes the practical tradeoff masked by accuracy.
 
+Rain per-location accuracy ranges from 66.2\% at Cairns (494 cases) to 93.2\% at Uluru (533 cases). The full forty-nine-location table accompanies the source. National averages do not establish uniform local performance, and evaluation at observed locations does not prove transfer to unseen stations.
+
+\subsection{Hot-Day Trend and Error Analysis}
+For twenty-five high-coverage years, annual hot-day counts increase by a fitted 0.846 days/year, or 8.46 days/decade. The valid-day rate increases by 2.20 percentage points/decade. An additional ordinary-regression analysis of the saved annual table gives count-slope 95\% interval $[-1.88,18.79]$ days/decade ($p=0.104$) and rate-slope interval $[-0.65,5.06]$ percentage points/decade ($p=0.124$). Thus the positive fitted trend is not distinguishable from zero at the 5\% level under this simple model. These additional report calculations do not adjust serial correlation.
+\figone{phase5_heat_trend.png}{Hot-day counts for years with at least 90\% valid daily maxima. The fitted upward line is descriptive; its ordinary slope interval includes zero.}{fig:heattrend}
+Figure~\ref{fig:heattrend} shows large annual variation, including a late-record peak, rather than a steady yearly increase. Counts are sensitive to valid-day coverage; the rate partially addresses denominators but cannot correct provider changes or station history.
+\figone{residual_compact.pdf}{Post-evaluation monthly-model diagnostics: seasonal MAE and actual-minus-predicted residuals. Diagnostics do not determine model selection.}{fig:residuals}
+
+Selected-model mean residuals are positive in all ten cities, from 0.044~$^\circ$C in Cape Town to 0.475~$^\circ$C in Paris, indicating average underprediction. New York's maximum absolute error is 4.93~$^\circ$C. Figure~\ref{fig:residuals} shows that typical MAE does not bound individual errors and that performance varies seasonally.
+
+In Fig.~\ref{fig:importance}, Humidity3pm, Pressure3pm, and WindGustSpeed dominate rain permutation importance. Previous-day maximum temperature, its trailing seven-day mean, and previous-day minimum temperature dominate heat importance. Correlated features can divide importance; slightly negative estimates can reflect sampling noise. These are predictive diagnostics rather than causal effects.
+
+\FloatBarrier
 \section{Discussion}
 \subsection{Answers to the Research Questions}
-\textbf{RQ1: Warming rate and change after 1975.} \todo{Quote estimated global rates, uncertainty intervals, and slope-comparison interpretation.}
+\textbf{RQ1: Warming rates.} The observed global land-and-ocean series has larger descriptive warming in 1975--2015 than 1850--1974: 0.1642 versus 0.0360~$^\circ$C/decade. The separate-intercept HAC comparison estimates a post-minus-pre slope difference of 0.1282~$^\circ$C/decade, with 95\% interval [0.1047, 0.1517] and $p=1.02e-20$. The result is a descriptive period difference, not a new attribution analysis. Broader physical attribution is addressed by assessment literature \cite{ipcc2023}.
 
-\textbf{RQ2: Twelve-month temperature forecasts.} \todo{Identify best model and its out-of-sample RMSE/MAE/R2 versus seasonal naive; explain differences across cities and horizons.}
+\textbf{RQ2: Forecasts.} CV-selected one-month models average 0.855~$^\circ$C MAE. Twelve-month validation-selected models average 0.922~$^\circ$C MAE and 21.0\% mean city skill. All ten families were tested at both leads, and SVR has the largest absolute MAE increase.
 
-\textbf{RQ3: Climate zones.} \todo{Explain dominant PCA dimensions, geographic cluster patterns, silhouette score, and agreement/disagreement with K\"oppen classification.}
+\textbf{RQ3: Climate zones.} Three clusters separate the standardized sample reasonably well, but ARI 0.0596 shows weak agreement with detailed K\"oppen classes. Seasonality, latitude, and hemisphere produce broad groups without precipitation-based distinctions. The analysis discovers temperature patterns rather than replaces established climate classification.
 
-\textbf{RQ4: Rain and heat events.} \todo{Compare the top classifiers on positive-class recall/F1 and ROC-AUC, evaluate false alarms and misses, and interpret the observed local hot-day trend.}
+\textbf{RQ4: Events and frequency.} Rain and heat reporting models detect many positives, with recalls 76.7\% and 77.1\%, but false alarms and missed events remain material. Hot-day counts have a positive fitted slope, yet the ordinary interval includes zero. This station-specific evidence does not establish a campus-wide or island-wide trend.
 
-\subsection{Critical Interpretation and Limitations}
-A CO$_2$--temperature association does not, by itself, prove causation: both variables trend over time, and an attribution argument also requires physical evidence, alternative forcings, confounding controls, and appropriate causal or physical modeling. Longer-horizon forecasts generally accumulate uncertainty because future states and inputs are not fully known, and performance differences between linear, tree-based, kernel, and neural models must be grounded in actual experiments. Historical estimates before 1850 have sparser coverage and greater uncertainty; changes in instruments, observing practices, and station location may distort naive trends. Classification outcomes can also be sensitive to class imbalance, temporal shifts, geographical transfer, and decision thresholds. Extreme-heat predictions could inform health advisories and electricity demand planning, but deployment would require calibration, external validation, and a plan for costly false negatives.
+\subsection{Required Discussion Questions}
+\textbf{Does CO$_2$--temperature association prove causation?} No. Conditional errors improve here, but year and CO$_2$ share temporal trends and correlated predictors can have unstable coefficients. Attribution also needs physical mechanisms, competing forcings, internal variability, and suitable causal or physical analysis. The limitations of this simple regression do not weaken the wider physical evidence summarized by the IPCC \cite{ipcc2023}.
+
+\textbf{Why can forecasts worsen with lead time, and which degrade fastest?} Recent weather measurements are unavailable at longer leads, unpredictable innovations accumulate, and recursive models can propagate errors. SVR has the largest measured increase in mean MAE between one and twelve months. Both evaluations use identical target dates, but their information sets and final training endpoints differ. Further horizons and alternative datasets are needed to establish a general degradation pattern.
+
+\textbf{How can instruments, station moves, and sparse early data bias trends?} Instrument changes and relocation can introduce discontinuities. Urbanization changes exposure; changing geographic coverage can shift an unweighted average even without common local change. Missing months can alter annual seasonal composition. Complete-year and high-coverage filters address some consequences but cannot replace homogenization, metadata checks, and robust uncertainty analysis.
+
+\textbf{How could heat predictions support planning?} Independent local validation could support reviewing cooling resources, outreach staffing, or electricity demand. Action thresholds should reflect missed-event and false-alert costs. The selected model produces 321 false alerts for 182 true positive days; direct automated warnings require further evaluation. A station percentile is not a clinical heat-risk threshold. Humidity, exposure, vulnerability, and calibration would be needed for specific public-health interventions.
+
+\subsection{Limitations}
+Files end at different times; global analysis ends in 2015. Ten forecasting cities and twenty clustering cities cannot represent all climates. Berkeley grid coordinates and independently sampled city centers can differ. San Juan International is a regional airport record, and aggregated provider data do not guarantee observation-only provenance.
+
+The rain sample discards available training observations to permit common-family comparison. Small grids and one seed do not establish optimal performance. CV standard deviations summarize folds rather than population confidence intervals. Source uncertainty is explored but not propagated through predictions. HAC results depend on the five-lag specification; more complete climate attribution and uncertainty propagation remain outside this benchmark. Full-record heat labeling is retrospective even though training-only and full-record thresholds coincide in this snapshot.
+
+Default classifier decisions are retained without validation-only threshold tuning or probability calibration. Residual and importance analyses are post-evaluation interpretations; reusing them to tune models would require a new validation strategy. Statistical fit and positive silhouette cannot substitute for physical validation or operational reliability.
 
 \section{Conclusion and Future Work}
-This paper proposes a unified approach to long-term climate trend estimation, 12-month city temperature forecasting, climate-zone discovery, and daily weather-event prediction. Its principal methodological requirements are time-aware evaluation, appropriate seasonal baselines, documented station and city coverage, and reproducible cross-validated model comparisons. \todo{Replace with concise quantitative conclusions and name the highest-performing models only after completing the analysis.} Future work can consider spatial generalization, uncertainty-aware probabilistic forecasts, additional explanatory variables, and explicit assessment of changing climate distributions.
+The integrated study finds larger descriptive warming after 1975, useful seasonal temperature prediction, weak recovery of detailed K\"oppen zones, and daily event classifiers limited by decision errors. CV-selected one-month models average 0.855~$^\circ$C MAE; twelve-month validation-selected models supply 21.0\% mean city skill over seasonal naive. Rain SVM and heat random forest achieve F1 0.640 and 0.493. Local annual hot-day counts have a positive fitted slope whose ordinary interval includes zero.
 
-\section*{Author Contributions}
-\begin{table}[H]\centering\footnotesize
-\begin{tabular}{p{0.27\columnwidth}p{0.60\columnwidth}}
-\toprule
-Student & Specific work and evidence \\
-\midrule
-Student 1 & \todo{Tasks, commits, sections, figures} \\
-Student 2 & \todo{Tasks, commits, sections, figures} \\
-Both & \todo{Review, testing, oral presentation} \\
-\bottomrule
-\end{tabular}
-\end{table}
+Future work should extend all regressors to common multi-horizon tests, add precipitation to clustering, assess geographic transfer, audit station history, and use temporally robust uncertainty estimates. Operational heat modeling requires a frozen past-only reference, calibrated risk, and independent local validation. Results should support transparent comparisons rather than causal claims from association or immediate deployment.
 
 \section*{Reproducibility and Data Availability}
-The intended repository structure is \texttt{README.md}, \texttt{requirements.txt}, \texttt{notebooks/}, \texttt{src/}, \texttt{data/README.md}, \texttt{figures/}, \texttt{report/}, and \texttt{slides/}. The notebook must run top to bottom in a clean Colab or Kaggle session, with fixed random seeds and data-download instructions. \todo{Add repository URL, commit hash, package versions, runtime, and data retrieval date.}
+The source package contains this manuscript, figures, exact tables, a 245-row master comparison, source hashes, and tested versions. The evidence comes from \texttt{Project4\_Team4.ipynb} and its October 30, 2026 outputs. All 27 code cells executed sequentially in a new in-process IPython namespace, including source acquisition in this workspace. The host prevented a TCP Jupyter kernel from starting, so this validation does not claim execution on Google-hosted Colab. The repository-backed Colab link opens the same final notebook for independent verification.
 
-\balance
+The environment used Python 3.12.14, pandas 3.1.0, numpy 2.3.5, matplotlib 3.10.8, seaborn 0.13.2, scikit-learn 1.8.0, scipy 1.17.0, kagglehub 1.0.3, meteostat 2.1.5, rasterio 1.5.2, statsmodels 0.15.0. Search used two workers. Timings include search/refit and are specific to this host; they are not expected production latency. Exact parameters, per-city results, CV variation and times are preserved in the master CSV. Raw source bytes are hashed and excluded from GitHub.
+
+The repository is \url{https://github.com/Edariel22/Project4_Climate_Analysis}. Its final notebook opens directly in Google Colab. Codex assisted with notebook revision, analysis verification, report drafting and formatting. Both students remain responsible for reviewing the code and results.
+
 \begin{thebibliography}{00}
-\bibitem{ipcc2023} IPCC, \emph{Climate Change 2023: Synthesis Report}. Geneva, Switzerland, 2023. [Online]. Available: \url{https://www.ipcc.ch/report/ar6/syr/}
-\bibitem{berkeley} Berkeley Earth, ``Temperature Data.'' [Online]. Available: \url{https://berkeleyearth.org/data/}
-\bibitem{noaa} NOAA Global Monitoring Laboratory, ``Trends in Atmospheric Carbon Dioxide.'' [Online]. Available: \url{https://gml.noaa.gov/ccgg/trends/}
-\bibitem{beck2018} H. E. Beck \emph{et al.}, ``Present and future K\"oppen--Geiger climate classification maps at 1-km resolution,'' \emph{Scientific Data}, vol. 5, 180214, 2018, doi: 10.1038/sdata.2018.214.
-\bibitem{sklearncv} scikit-learn developers, ``TimeSeriesSplit.'' [Online]. Available: \url{https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html}
-\bibitem{sklearnpipeline} scikit-learn developers, ``Pipeline.'' [Online]. Available: \url{https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html}
-\bibitem{meteostat} Meteostat, ``Historical Weather and Climate Data.'' [Online]. Available: \url{https://meteostat.net/}
-\bibitem{australia} Kaggle, ``Rain in Australia / Weather Dataset.'' \todo{Insert exact dataset author, version, URL and date accessed.}
+\bibitem{reichstein} M. Reichstein \emph{et al.}, ``Deep learning and process understanding for data-driven Earth system science,'' \emph{Nature}, vol. 566, pp. 195--204, 2019, doi: 10.1038/s41586-019-0912-1.
+\bibitem{rolnick} D. Rolnick \emph{et al.}, ``Tackling climate change with machine learning,'' \emph{ACM Computing Surveys}, vol. 55, no. 2, Art. 42, 2022, doi: 10.1145/3485128.
+\bibitem{ham} Y.-G. Ham, J.-H. Kim, and J.-J. Luo, ``Deep learning for multi-year ENSO forecasts,'' \emph{Nature}, vol. 573, pp. 568--572, 2019, doi: 10.1038/s41586-019-1559-7.
+\bibitem{rasp} S. Rasp, M. S. Pritchard, and P. Gentine, ``Deep learning to represent subgrid processes in climate models,'' \emph{Proc. Natl. Acad. Sci. USA}, vol. 115, pp. 9684--9689, 2018, doi: 10.1073/pnas.1810286115.
+\bibitem{beck2018} H. E. Beck \emph{et al.}, ``Present and future K\"oppen--Geiger climate classification maps at 1-km resolution,'' \emph{Scientific Data}, vol. 5, Art. 180214, 2018, doi: 10.1038/sdata.2018.214.
+\bibitem{beck2023} H. E. Beck \emph{et al.}, ``High-resolution (1 km) K\"oppen--Geiger maps for 1901--2099 based on constrained CMIP6 projections,'' \emph{Scientific Data}, vol. 10, Art. 724, 2023, doi: 10.1038/s41597-023-02549-6. Historical data: Figshare 21789074, version 2.
+\bibitem{bergmeir} C. Bergmeir, R. J. Hyndman, and B. Koo, ``A note on the validity of cross-validation for evaluating autoregressive time series prediction,'' \emph{Computational Statistics \& Data Analysis}, vol. 120, pp. 70--83, 2018, doi: 10.1016/j.csda.2017.11.003.
+\bibitem{pedregosa} F. Pedregosa \emph{et al.}, ``Scikit-learn: Machine learning in Python,'' \emph{Journal of Machine Learning Research}, vol. 12, pp. 2825--2830, 2011.
+\bibitem{berkeley} Berkeley Earth, ``Temperature data.'' [Online]. Available: \url{https://berkeleyearth.org/data/}. Accessed: Oct. 30, 2026.
+\bibitem{kaggleberkeley} Berkeley Earth, ``Climate change: Earth surface temperature data,'' Kaggle, version 2. [Online]. Available: \url{https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data}. Accessed: Oct. 30, 2026.
+\bibitem{australia} Kaggle user jsphyg, ``Rain in Australia,'' Kaggle, \texttt{jsphyg/weather-dataset-rattle-package}, version 2. [Online]. Available: \url{https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package}. Accessed: Oct. 30, 2026.
+\bibitem{noaa} NOAA Global Monitoring Laboratory, ``Trends in atmospheric carbon dioxide: Mauna Loa monthly means.'' [Online]. Available: \url{https://gml.noaa.gov/ccgg/trends/}. Accessed: Oct. 30, 2026.
+\bibitem{meteostat} Meteostat, ``San Juan / Int., station 78526.'' [Online]. Available: \url{https://meteostat.net/en/station/78526}. Accessed: Oct. 30, 2026.
+\bibitem{naturalearth} Natural Earth, ``1:110m cultural vectors: Admin 0 countries,'' public-domain basemap. [Online]. Available: \url{https://www.naturalearthdata.com/}.
+\bibitem{geonames} GeoNames, ``Geographical database: cities15000,'' CC BY 4.0. [Online]. Available: \url{https://download.geonames.org/export/dump/}.
+\bibitem{ipcc2023} IPCC, \emph{Climate Change 2023: Synthesis Report}. Geneva, Switzerland: IPCC, 2023. [Online]. Available: \url{https://www.ipcc.ch/report/ar6/syr/}.
 \end{thebibliography}
+
+\section*{Author Contributions}
+The author list uses the names supplied by the team. Repository history records code and notebook commits under Miguel A. De Jesus and Edariel22. The team must confirm the identity mapping and individual task allocation before submitting a signed contribution claim. Codex assistance is disclosed above.
+\begin{table}[h]\centering\footnotesize
+\begin{tabular}{p{.30\columnwidth}p{.60\columnwidth}}
+\toprule Author & Contribution record \\\midrule
+Miguel A. De-Jesus-Rosa & Notebook and analysis commits are recorded under Miguel A. De Jesus; final individual task allocation requires team confirmation. \\
+Elias D Medina Galan & Individual tasks require team confirmation; contributions are not inferred from repository ownership. \\\bottomrule
+\end{tabular}\end{table}
 \end{document}

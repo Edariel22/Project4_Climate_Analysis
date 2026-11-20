@@ -1,20 +1,23 @@
-# Data access and provenance
+# Data sources
 
-Run the acquisition cell in the notebook, or `python scripts/prepare_data.py` from the repository root. Source data are cached under `data/raw/` and excluded from Git. Do not commit Kaggle credentials, tokens or downloaded CSVs. The first city download is large (hundreds of MB).
+The notebook downloads the source files to `data/raw/`. Large raw files are kept out of GitHub. Tables describing coverage and missing values are saved with the results in `outputs/phase1/`.
 
-| Source | Required files / role | Official access |
+| Source | Selection | Access |
 |---|---|---|
-| Berkeley Earth via Kaggle | GlobalTemperatures.csv and GlobalLandTemperaturesByCity.csv | https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data |
-| NOAA GML / Scripps | co2_mm_mlo.csv; monthly ppm | https://gml.noaa.gov/ccgg/trends/data.html |
-| Rain in Australia, jsphyg | weatherAUS.csv | https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package |
-| Meteostat | Daily observations for a confirmed local station | https://dev.meteostat.net/python/ |
+| Berkeley Earth / Kaggle v2 | `GlobalTemperatures.csv`, `GlobalLandTemperaturesByCity.csv` | https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data |
+| NOAA GML | `co2_mm_mlo.csv` | https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.csv |
+| Rain in Australia / Kaggle v2 | `weatherAUS.csv` | https://www.kaggle.com/datasets/jsphyg/weather-dataset-rattle-package |
+| Meteostat | Daily station 78526, 2000–2025 | https://meteostat.net/en/station/78526 |
+| Köppen-Geiger | Beck et al. 2023; historical 1961–1990, 0.1° raster; Figshare 21789074 v2 | https://doi.org/10.1038/s41597-023-02549-6 |
+| GeoNames | City-centre coordinates, city names/country codes | https://download.geonames.org/export/dump/cities15000.zip |
+| Natural Earth | 1:110m country world basemap | https://www.naturalearthdata.com/ |
 
-Selected station for UAGM Gurabo: **78526 / TJSJ (San Juan International Airport)**, approximately 21.3 km from campus. Download period: **2000-2025**. The default preparation script now includes it. See [station selection](../docs/STATION_SELECTION.md) for the candidate comparison, calendar-based coverage and mixed-source provenance caveat. The full-record heat threshold will refer to this explicitly selected period.
+The notebook downloads the supporting map data and looks up published Köppen classes at documented city coordinates. The small twenty-city reference table is included; the large source archives remain local. The Beck climate raster and GeoNames data use CC BY 4.0, and Natural Earth is public domain. The original providers describe the terms for their data.
 
-`kagglehub.dataset_download` retrieves version 2 of each public Kaggle source. The initial local snapshot was downloaded through Kaggle's official API; the notebook's KaggleHub method was separately verified on the global CSV. Some environments may require Kaggle authentication or acceptance of dataset terms; never embed credentials in the notebook. Download failures are errors, not permission to substitute made-up data. NOAA is downloaded directly. Meteostat 2.1.5 uses `meteostat.daily(...).fetch()`, rather than the older `Daily` class in the handout.
+Forecasting cities: New York, London, Paris, Cairo, Bombay (Mumbai), Tokyo, Sydney, Cape Town, São Paulo and La Plata (documented replacement for absent Buenos Aires). Additional clustering cities: Los Angeles, Chicago, Berlin, Moscow, Peking (Beijing), Bangkok, Singapore, Melbourne, Lima and Nairobi.
 
-The raw manifest records retrieval timestamps, resolved Kaggle cache paths (including source version when available), file sizes and SHA256 hashes. Preserve this local snapshot for exact reproduction: NOAA and live provider data can be revised. A new download from a live source is not guaranteed byte-identical. Public aggregate coverage is saved under `docs/`.
+Temperature anomalies use the 1951–1980 average. City climate profiles use 1961–1990. One-month city training ends in December 2000; twelve-month training labels end in January 2000 to respect the first forecast origin. Both are tested on the available 2001–2013 months. Rain testing starts in 2016, and heat testing uses 2021–2025. The source records do not all end in the same year.
 
-Licensing: the handout identifies NOAA as public-domain data and Meteostat as CC BY 4.0. Cite NOAA GML/Scripps and Meteostat plus upstream providers as applicable; verify the Kaggle dataset-page terms before redistribution. This repository does not redistribute raw data.
+Station 78526 is San Juan International (TJSJ), at 18.4333 N, 66.0000 W in Meteostat metadata. It is about 21.3 km from campus. Meteostat combines provider products; a nonmissing value does not guarantee a direct observation. Missing temperatures stay missing. Annual heat trends use years with at least 90% valid maximum temperatures and show both hot-day counts and their share of valid days. The heat threshold follows the assignment: the 90th percentile of maximum temperature over the full record.
 
-City processing scans the full file in chunks. It retains all dates for the ten named city/country pairs and aggregates 1961-1990 climatologies across all cities. Clustering eligibility requires >=24 valid observations for each calendar month; no random sampling is used. Report names, coordinates, eligible/excluded counts and actual date coverage.
+Never commit credentials, raw CSVs or unrelated Colab `sample_data/` examples.
